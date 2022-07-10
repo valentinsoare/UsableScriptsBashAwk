@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+source "$(dirname "${BASH_SOURCE[0]}")"/../script.library/reusableFunctions
+
+STORAGE_DEVICE=$(df -hT | grep -E -e "ext4" -e "xfs" | sort -k3)
+
+#printInterfaces() {
+#    local j=0
+#    for i in $(ip addr show | grep -E -e '^[[:digit:]].* ' | awk '{print $2}'); do
+#        VAR=${i%:*}
+#        if [[ $j -ne 0 ]]; then
+#            printLines 60
+#        fi
+#        echo -e "\n\e[1;38;5;1${j}m*INTERFACE:\e[0m\t\t\t\t${VAR} \n$(nmcli device show "${VAR}" | grep -E 'TYPE|HWADDR|MTU|STATE|IP4.(ADDRESS|GATEWAY)')"
+#        ((j++))
+#    done
+#}
+
+printCPUinfo() {
+    lscpu | while IFS= read -r line; do 
+        echo "${line}" | grep -E 'Architecture|op-mode|CPU(s)|On-line|Thread|Core|Socket|Model Name|CPU MHz|Virtua|Hyper|Virtualization type'; 
+    done
+}
+
+printMem() {
+    echo -e "\e[1;38;5;132m*MEMORY INFO:\e[0m"
+    while IFS= read -r line; do
+        echo "${line}" | grep -E 'MemTotal|MemFree|MemAvailable|Buffers|\<Cached:|Active:|Inactive:'
+    done < /proc/meminfo
+}
+
+CPUallInfo() {
+    CPU_load=$(uptime | grep -Eo 'load average.*')
+    echo -e "\e[1;38;5;111m*CPU INFO:\e[0m"
+    printCPUinfo
+    echo -e "\n\e[1;38;5;34m*CPU LOAD:\e[0m \n${CPU_load}"
+}
+
+printNetwork() {
+    local k=0
+    echo -e "\e[1;38;5;165m*NETWORK INFO:\e[0m"
+    lshw -c network | head -n 15 | while IFS= read -r line; do
+        if [[ $k -eq 14 ]]; then
+            echo ${line} | grep -E 'configuration' | head -n 1 | cut -d " " -f1,2,4,6,7,12,13,14
+        fi
+        echo -e ${line} | grep -E 'description|product|vendor|logical name|serial|size'
+        ((k++))
+    done
+}
+
+main_Running() {
+    #. $(dirname "${BASH_SOURCE[0]}")/loading.scripts/loadingBar "Initializing" 0.1; sleep 0.5; echo -e ""
+    echo -e "\n\n\e[1;38;5;203m*DEVICES MOUNTED:\e[0m\n${STORAGE_DEVICE}"
+    printing_lines 60; echo -e "";
+    printMem
+    printing_lines 60
+    echo -e ""; CPUallInfo
+    printing_lines 60; echo -e ""
+    printNetwork
+    printing_lines 60; echo -e ""
+}
+
+main_Running

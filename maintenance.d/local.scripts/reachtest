@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+HIDE_CURSOR=$(tput civis)
+SHOW_CURSOR=$(tput cnorm)
+TARGET=${1}
+COUNT=${2}
+
+source "$(dirname "${BASH_SOURCE[0]}")"/../script.library/reusableFunctions
+
+checkTargetAndCount() {
+    nslookup -query=hinfo -timeout=10 "${TARGET}" > /dev/null 2>&1
+    target_output=$?
+
+    if [[ ${target_output} -ne 0 ]]; then
+            printf "\n\e[1;31m%s\e[0m\n" "ERROR - target doesn't exist."
+            return 1
+    elif [[ ${COUNT} -lt 1 ]]; then
+            printf "\n\e[1;31m%s\e[0m\n" "ERROR - number of packets should be at least 1."
+            return 1 
+    fi
+}
+
+printOutputReachability() {
+    action=$(ping "${TARGET}" -c "${COUNT}" | tail -n 3) 2> /dev/null
+    echo -en "\e[1mDONE\e[0m"
+    sleep 0.5
+    echo -e "\n\n${action}"
+}
+
+main_exec() {
+    echo -en "${HIDE_CURSOR}"
+
+    checkTargetAndCount
+
+    if [[ "${?}" -ne 0 ]]; then
+        return 1
+    fi
+
+    echo -ne "\e[1m\n  Testing reachability\e[0m"
+
+    progress_dots "1" "." &
+    printOutputReachability
+    
+    kill ${!}; wait ${!} 2> /dev/null
+    echo -en "${SHOW_CURSOR}"
+}
+
+main_exec

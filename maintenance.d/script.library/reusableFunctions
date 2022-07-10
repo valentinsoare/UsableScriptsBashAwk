@@ -1,0 +1,128 @@
+#!/bin/bash
+
+progress_dots() {
+    local sleepTime="${1}"
+    local typeP="${2}"
+    local message="${3}"
+    printf "\e[1m %s\e[0m" "${message}"
+    while true; do
+        printf "\e[1m%s\e[0m" "${typeP}"
+        sleep "${sleepTime}"
+    done
+    trap 'kill $!' SIGTERM
+}
+
+endProgress_dots() {
+    local printed_message="${1}"
+    kill "${!}"
+    wait "${!}" 2> /dev/null
+    sleep 0.1
+    printf "\e[1m%s\e[0m\n" "DONE"
+    sleep 0.5
+    printf "%s\n" "${printed_message}"
+}
+
+endProgress_dots() {
+    local printed_message="${1}"
+    kill "${!}"
+    wait "${!}" 2> /dev/null
+    sleep 0.1
+    printf "\e[1m%s\e[0m\n" "DONE"
+    sleep 0.5
+    printf "%s\n" "${printed_message}"
+}
+
+cursorPosition() {
+    local position
+    IFS='[;' read -p $'\e[6n' -d R -a position -rs
+    printf "%s\n" "${position[1]} ${position[2]}"
+}
+
+printing_lines() {
+    local number="${1}"
+    local sleepingTime="${2}"
+    printf "%${number}s" " " | tr " " "-"
+    if [[ -n "${sleepingTime}" ]]; then
+        sleep "${sleepingTime}"
+    fi
+}
+
+getDistro() {
+    linux_family=$(awk -F "=" '/ID_LIKE/{print $2}' /etc/*release | grep -Eio -e "rhel" -e "debian")
+    linux_distro=$(awk -F "=" '/PRETTY_NAME/{print $2}' /etc/*release | head -n 1 | awk -F "\"" '{print $2}')
+    printf "%s,%s\n" "${linux_family}" "${linux_distro}"
+}
+
+checkConnForIssues() {
+    SERVER="${1}"
+    USR="${2}"
+    PASSWORD="${3}"
+
+    host -W 1 "${SERVER}" > /dev/null 2>&1
+    exit_code_available="${?}"
+
+    if [[ "${exit_code_available}" -ne 0 ]]; then
+        printf "\n\e[1;31m%s\e[0m\n" "ERROR - domain \"${SERVER}\" doesn't exists."
+        return 1
+    else
+        sshpass -p "${PASSWORD}" ssh -o ConnectTimeout=1 -o StrictHostKeyChecking=no -q "${USR}"@"${SERVER}" 'exit' > /dev/null 2>&1
+        exit_code_ssh="${?}"
+        if [[ "${exit_code_ssh}" -ne 0 ]]; then
+            printf "\n\e[1;31m%s\e[0m\n" "ERROR - ssh connection to ${SERVER} is not possible."
+            return 1
+        fi
+    fi 
+}
+
+quitingOrPassing() {
+    if [[ "${answer}" == "q" ]] || [[ "${answer}" == "quit" ]]; then
+        printf "\n\e[38;5;47m%s\e[0m\n" "Quiting..."
+        return 1
+    elif [[ "${answer}" == "p" ]] || [[ "${answer}" == "pass" ]]; then
+        answer=null
+        return 2
+    fi      
+}
+
+generate_banner() {
+  local msg 
+  local edge
+  msg="| ${1} |"
+  edge=$(printf "%s" "${msg}" | sed 's/./-/g')
+  printf "\n\e[38;5;113m"
+  printf "%s\n" "${edge}"
+  printf "%s\n%s\n" "${msg}" "|    $(date "+%X %x")    |"
+  printf "%s\n" "${edge}"
+  printf "\e[0m\n"
+}
+
+catch_Input() {
+    declare -ax basicFeatures=("$@")
+    clear
+    j=1
+    generate_banner "*Maintenance Decisions v0.1*"
+    for ((i=0; i<${#basicFeatures[@]}; i++)); do
+        printf "\e[38;5;${j}m[$i] \e[0m\e[38;5;252m%s\e[0m\n" "${basicFeatures[$i]}"
+        ((j++))
+    done
+}
+
+addonToQuit() {
+    local givenVar="${1}"
+
+    quitingOrPassing
+    returnVal="${?}"
+
+    if [[ "${returnVal}" -eq 1 ]]; then
+        return 1
+    elif [[ "${returnVal}" -eq 2 ]]; then
+        printf "\n\e[38;5;113m %s\e[0m\n\n" "No input was given for ${givenVar,,}"
+    fi
+}
+
+file_download() {
+    local link=$1
+    printf "%s" "Downloading: [      "
+    wget --progress=dot "${link}" 2>&1 | grep --line-buffered -Eo "[0-9]{1,3}%" | awk '{printf("\b\b\b\b\b\b\b%-7s", $1"]")}'
+    printf "%s\n" "DONE"
+}

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+source "$(dirname "${BASH_SOURCE[0]}")"/../script.library/reusableFunctions
+
+printing_lines 30       
+getDistro
+printing_lines 30
+
+baseLogin

@@ -1,0 +1,203 @@
+#!/bin/bash
+
+
+source "$(dirname "${BASH_SOURCE[0]}")"/script.library/reusableFunctions
+
+INV_CURSOR=$(tput civis)
+NRM_CURSOR=$(tput cnorm)
+declare -a basicCommands
+basicCommands=("Uptime and Hostname" "Disk space" "Home space utilization" "Export scripts to remote server" "Remove Emby Temporary files from remote server" "Local system update" "Current machine system information" "\
+Scan hostname for open ports" "Largest files on local machine" "Update OS for servers using SSH" "Reachability testing" "Largest files on remote machine" "Login into a server" "Quit")
+declare -ax necessaryAnswer
+
+ generate_output() {
+    progress_dots 0.5 . &
+    local variable_command
+    variable_command="${1}"
+    variable_command=$(eval "$variable_command")
+    printf "%s" "DONE"; kill "${!}"; wait "${!}" 2> /dev/null; sleep 0.3 
+    printf "\n%s" "${variable_command}";
+}
+
+scanningPorts_execution() {
+    declare -ax scanningArg=("Hostname" "First port" "Last port") 
+    declare -ax scanningVar
+    
+    printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[7]}"
+    sleep 0.3
+    printf "   \e[38;5;117m**Need to know: %s\e[0m\n\n" "press q/quit to exit or p/pass to jump to next input variable."
+
+    for i in "${!scanningArg[@]}"; do
+        local j=$((i+1))
+        printf "\e[38;5;1${j}m%s \e[0m" "[${j}]"
+        read -r -p "${scanningArg[$i]}: " answer
+        addonToQuit "${scanningArg[$i]}"
+        [[ $? -eq 1 ]] && { return 1; }
+        scanningVar+=("${answer}") 
+    done
+    . "$(dirname "${BASH_SOURCE[0]}")"/local.scripts/portscan "${scanningVar[0]}" "${scanningVar[1]}" "${scanningVar[2]}"; 
+}
+
+home_space() {
+    printf "   \e[38;5;195m*Selected option: %s\e[0m\n\n" "${basicCommands[2]}"
+    if [[ $(id -u) -eq 0 ]]; then
+        printf "%s" "Home Space Utilization, All Users"
+        generate_output "du -sh /home/* 2> /dev/null | sort -hr"
+    else
+        printf "%s" "Home Space Utilization, ($USER)"
+        generate_output "du -sh ${HOME}/* 2> /dev/null | sort -hr"
+    fi
+}
+
+maximum_SizeLocaly() {
+    printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[8]}"
+    sleep 0.3
+    printf "   \e[38;5;117m**Need to know: %s\e[0m\n\n" "press q/quit to exit or p/pass to jump to next input variable."
+
+    printf "\e[35m%s \e[0m" "[1]"; read -r -p "Folder to check: " answer
+    addonToQuit "folder"
+    [[ $? -eq 1 ]] && { return 1; }
+    given_folder="${answer}"
+    printf "\e[36m%s \e[0m" "[2]"; read -r -p "How many files to display: " answer
+    addonToQuit "number of files"
+    [[ $? -eq 1 ]] && { return 1; }
+    number_of_files="${answer}"
+    
+    . "$(dirname "${BASH_SOURCE[0]}")"/local.scripts/maxSizeLocal "${given_folder}" "${number_of_files}"
+}
+
+reachabilitytesting() {
+    printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[10]}"
+    sleep 0.3
+    printf "   \e[38;5;117m**Need to know: %s\e[0m\n\n" "press q/quit to exit or p/pass to jump to next input variable."
+
+    printf "\e[34m%s \e[0m" "[1]"; read -r -p "IP/Hostname: " answer
+    addonToQuit "IP/Hostname"
+    [[ $? -eq 1 ]] && { return 1; }
+    given_destination="${answer}"
+    printf "\e[35m%s \e[0m" "[2]";  read -r -p "Number of packets: " answer
+    addonToQuit "number of packets"
+    [[ $? -eq 1 ]] && { return 1; }
+    packets_count="${answer}"
+    
+    . "$(dirname "${BASH_SOURCE[0]}")"/local.scripts/reachtest "${given_destination}" "${packets_count}"
+    
+    if [[ "${?}" -eq 1 ]]; then
+         return 1
+    fi 
+}
+
+secondaryQuestions() {
+    declare -ax needed_options=("$@")
+
+    for ((k=1; k<=((${#needed_options[@]}-1)); k++)); do
+        printf "\e[38;5;${j}m%s\e[0m " "[${j}]"
+        read -r -p "${needed_options[$k]}: " answer
+        addonToQuit "${needed_options[$k]}" 
+        [[ $? -eq 1 ]] && { return 1; }
+        necessaryAnswer+=("${answer}")
+        ((j++))
+    done
+}
+
+simpleLogin() {
+    j=1
+    location="${1}"
+    declare -ax option=("$@")
+    declare -ax loginInfo
+    declare -ax questionsLogin=("Server" "User" "Password/Passphrase" "Public key")
+
+    sleep 0.3
+    printf "   \e[38;5;117m**Need to know: %s\e[0m\n\n" "press q/quit to exit or p/pass to jump to next input variable."
+    for i in "${!questionsLogin[@]}"; do
+        printf "\e[38;5;${j}m%s\e[0m " "[${j}]"
+        if [[ ${i} -eq 2 ]]; then
+            read -r -s -p "${questionsLogin[$i]}: " answer; printf "\n"
+            addonToQuit "${questionsLogin[$i]}"
+             [[ $? -eq 1 ]] && { return 1; }
+            loginInfo+=("${answer}")
+        else
+            read -r -p "${questionsLogin[$i]}: " answer
+            addonToQuit "${questionsLogin[$i]}" 
+            [[ $? -eq 1 ]] && { return 1; }
+            loginInfo+=("${answer}")
+        fi
+        ((j++))  
+    done
+
+    if [[ -f "${location}" ]] && [[ "${#option[@]}" -eq 0 ]]; then
+            . "${location}" "${loginInfo[0]}"  "${loginInfo[1]}" "${loginInfo[2]}"
+    elif [[ -f "${location}" ]] && [[ "${#option[@]}" -ne 0 ]]; then
+            secondaryQuestions "${option[@]}"
+            returnVal="${?}"
+            if [[ ${returnVal} -eq 1 ]]; then
+                return 1
+            fi
+        . "${location}" "${loginInfo[0]}" "${loginInfo[1]}" "${loginInfo[2]}" "${necessaryAnswer[0]}" "${necessaryAnswer[1]}"
+    else
+        checkConnForIssues "${loginInfo[0]}" "${loginInfo[1]}" "${loginInfo[2]}"
+        [[ $? -eq 1 ]] && { return 1; }
+        sshpass -p "${loginInfo[2]}" ssh -o ConnectTimeout=1 -o StrictHostKeyChecking=no -q "${loginInfo[1]}"@"${loginInfo[0]}"
+    fi     
+}
+
+runMenu() {
+declare -ax arrayMessage=("Folder to check" "How many files to display")
+
+while true; do
+    catch_Input "${basicCommands[@]}"   
+    printf "\n\e[38;5;230m"; read -r -p "   Enter selection [0-13]: " selection; printf "\n\e[0m"
+    case "${selection}" in
+        0)  printf "%s\n" "Hostname: ${HOSTNAME}"; uptime;; 1) df -hT;; 2) home_space; printf "\n"
+            ;;
+        3)  printf "   \e[38;5;195m*Selected option: %s\e[0m\n\n" "${basicCommands[3]}"
+            simpleLogin "$(dirname "${BASH_SOURCE[0]}")"/remote.scripts/exportscripts
+            ;;
+        4)  printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[4]}"
+            simpleLogin "$(dirname "${BASH_SOURCE[0]}")"/remote.scripts/embyfree
+            ;;
+        5)  printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[5]}"
+            . "$(dirname "${BASH_SOURCE[0]}")"/local.scripts/autoupdate -show
+            ;;
+        6)  printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[6]}"
+             "$(dirname "${BASH_SOURCE[0]}")"/local.scripts/sysinfo 
+            ;;
+        7)  scanningPorts_execution;; 8) maximum_SizeLocaly
+            ;;
+        9)  printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[9]}"
+            simpleLogin "$(dirname "${BASH_SOURCE[0]}")"/remote.scripts/updatingservers 
+            ;;
+        10) reachabilitytesting
+            ;;
+        11) printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[11]}"
+            simpleLogin "$(dirname "${BASH_SOURCE[0]}")/remote.scripts/maxSizeRemote" "${arrayMessage[@]}"
+            ;;
+        12) printf "   \e[38;5;195m*Selected option: %s\e[0m\n" "${basicCommands[12]}"
+            simpleLogin 
+            ;;
+        13) break
+            ;;
+        *)  printf "\e[38;5;196m%s\e[0m\n" "Invalid entry"
+            ;;
+      esac
+      
+    sleep 0.1
+    printf "%s" "${INV_CURSOR}"
+    printf "\e[38;5;195m\n%s\e[0m" "Press any key to continue"
+    read -n 1
+    printf "%s" "${NRM_CURSOR}"
+done
+}
+
+main_instructions(){
+    source "$(dirname "${BASH_SOURCE[0]}")"/local.scripts/loadingBar "Initializing" 0.05
+    tput cuu1
+    tput ed
+    tput cuu1
+    tput smcup
+    runMenu
+    tput rmcup
+    printf "%s\n" "Script terminated"
+}
+
+main_instructions

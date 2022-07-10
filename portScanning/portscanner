@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+TARGET=$1
+START=$2
+END=$3
+HIDE_CURSOR=$(tput civis)
+SHOW_CURSOR=$(tput cnorm)
+SAVE_POSITION=$(tput sc)
+RESTORE_POSITION=$(tput rc)
+counter_open=0
+
+
+onePortScan() {
+    nc -zw0.1 "${TARGET}" "${START}" && { printf "\e[38;5;208m %s%s\n" "${START} - $(grep "${START}" /etc/services | head -n 1 | awk '{print $1}') *" \
+        " $(grep "${START}" /etc/services | head -n 1 | awk -F "#" '{print $2}')";
+        ((counter_open++)); }   
+    
+    [[ "${counter_open}" -eq 0 ]] &&{ printf "\e[38;5;1;1m %s\e[0m\n" "No open ports in the given range."; }
+}
+
+
+checkToolsAvailability() {
+    rpm -q nmap-ncat &> /dev/null
+    local output_nc="${?}"
+    local PASS="valisoare_191987+"   
+
+     if [[ "${output_nc}" -ne 0 ]]; then
+            printf "\n %s \e[31m%s\e[0m\n" "*nmap-ncat package ->" "not installed"
+            progress_dots "0.1" "." "**Nmap-ncat installing" &
+            echo "${PASS}" | sudo -S yum install nmap-ncat -y &> /dev/null 
+            kill "${!}"
+            wait "${!}" 2> /dev/null
+            printf "%s\n" "DONE"
+            sleep 0.5
+            printf "\n %s \e[32m%s\e[0m\n" "*nmap-ncat package ->" "installed"
+     fi
+}
+
+runScanning() {
+
+        if [[ ${TARGET} == "null" ]]; then
+            printf " \e[38;5;1;1m%s\e[0m\n" "Issues with first argument, no hostname specified."
+            return 1
+        elif [[ -z ${START} || (! ${START} =~ [[:digit:]]{1,6} || ${START} =~ [[:alpha:]].*) ]]; then
+            printf " \e[38;5;1;1m%s\e[0m\n" "Issues with first argument, you need to specified a port number or a range of ports for scanning."
+            return 1
+        fi
+
+        nslookup -timeout=1 "${TARGET}" > /dev/null 2>&1
+        code_output="${?}"
+
+        if [[ ${code_output} -ne 0 ]]; then
+            printf " \e[38;5;1;1m%s\e[0m\n" "ERROR - address not found!!"
+        else     
+            if [[ -z "${END}" ]]; then
+                onePortScan 
+            elif [[ (! ${END} =~ [[:digit:]]{1,6} || ${END} =~ [[:alpha:]].*) || (${END} -lt ${START}) ]]; then 
+                printf " \e[38;5;1;1m%s\e[0m\n" "Issues with third argument \"${END}\". We need only digits and it needs to be greater than first port mentioned."
+            elif [[ ${END} -eq ${START} ]]; then
+                onePortScan
+            else
+                for i in $(seq "${START}" "${END}"); do
+                    if nc -zw0.1 "${TARGET}" "${i}"; then
+                        printf "\e[38;5;208m %s%s\n" "${i} - $(grep "${i}" /etc/services | head -n 1 | awk '{print $1}') *" \
+                        "$(grep "${i}" /etc/services | head -n 1 | awk -F "#" '{print $2}')"
+                        ((counter_open++))
+                    fi
+                done
+                if [[ "${counter_open}" -eq 0 ]]; then 
+                    printf "\e[38;5;1;1m %s\e[0m\n" "No open ports in the given range."
+                fi        
+            fi
+        fi         
+}
+
+initializer_in_percent() {
+    printf "\n \e[38;5;158;41;1;1m%s\e[0m" " **Prepare for scanning: ["
+
+    while [[ "${j}" -le 100 ]]; do
+        printf "%s" "${SAVE_POSITION}"
+        printf "\e[38;5;158;41;1;1m%s\e[0m" "${j}%] "
+        [[ "${j}" -ne 100 ]] && { printf "%s" "${RESTORE_POSITION}"; }
+        sleep 0.01
+        ((j++))
+    done
+
+    printf "\n"
+}
+
+main() {
+    printf "%s" "${HIDE_CURSOR}"
+    initializer_in_percent
+    checkToolsAvailability
+    sleep 0.5
+    line=$(for ((i=0; i<45; i++)); do printf "\e[38;5;118m%s\e[0m" "-"; done;)
+    printf "\e[38;5;118m\n %s\n %s\e[0m\n" "Ports Open and Ready for Connections:" "${line}"
+    runScanning
+    printf " %s\n" "${line}"
+    printf "\e[38;5;118m %s \e[0m\n" "COMPLETED!!"
+    printf "%s" "${SHOW_CURSOR}"
+}
+
+main

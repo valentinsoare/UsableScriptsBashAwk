@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+download()
+{
+    local link=$1
+    printf "%s" "Downloading:[      "
+    wget --progress=dot "${link}" 2>&1 | grep --line-buffered -Eo "[0-9]{1,3}%" | awk '{printf("\b\b\b\b\b\b%-6s", $1"]")}'
+    printf "%s\n" "DONE"
+}
+
+download "$1"
