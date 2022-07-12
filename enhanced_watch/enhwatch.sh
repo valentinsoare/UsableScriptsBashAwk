@@ -9,11 +9,6 @@ normal_cursor="$(tput cnorm)"
 
 printing_header() {
 
-    #declare measuring_height 
-    declare desired_text_hostname desired_text_user desired_text_groups exec_date \
-            catch_uid catch_groups_id catch_hostname catch_date space_right size_dates \
-            measuring_width
-
     desired_text_hostname="Hostname: "
     desired_text_user="User: "
     desired_text_groups="Groups: "
