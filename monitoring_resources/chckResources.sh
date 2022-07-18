@@ -6,6 +6,7 @@ declare -a resources  needed_resources \
 input_arguments="${*}"
 resources=("pid" "user" "%cpu" "%mem" "rss" "vsz" "time")
 array_for_sorting=("%cpu" "%mem" "rss" "vsz" "time")
+nr_of_cmds=1
 
 catch_control_c() {
     printf "\n\n\033[1;31m%s\033[0m\n\n" " **Exiting..."
@@ -98,13 +99,16 @@ print_ps(){
     to_sort_by="${1}"
     value_to_sort="${2}"
 
-    printf "\n\033[31m[\033[0m %s \033[31m]\033[0m\n\n" "ps -eo ${resources_to_check[*]} - > top 5 sorted by ${to_sort_by}"
+    printf "\n\033[31m[\033[0m %s \033[31m]\033[0m\n\n" "- > top 10 sorted by ${to_sort_by}"
     variable_to_print="$(ps -eo "${resources_to_check[*]}")"
     printf "%s\n" "${variable_to_print}" | head -1
     printf "%s\n" "${variable_to_print}" | grep -i -v "${to_sort_by}" | sort -k"${value_to_sort}" -n | tail -10
 }
 
 loading_print_ps() {
+
+    printf "\n\n\033[31m(${nr_of_cmds})\033[0m %s \033[31m\033[0m\n\n" "ps -eo ${resources_to_check[*]}" 
+
     for ((i=0; i<${#resources_to_check[@]}; i++)); do
         if [[ "${array_for_sorting[*]}" =~ ${resources_to_check[$i]} ]]; then
             print_ps "${resources_to_check[$i]}" "$((i + 1))"
