@@ -6,7 +6,7 @@ number_of_hangs_to_exit="${1}"
 to_exec() {
     start="$(date +%s)"
     sleep 2
-    sleep 5     # to simulate hang
+    sleep 5     # simulate hang 5 seconds
     end="$(date +%s)"
 
     if [[ $((end - start)) -gt 2 ]]; then
