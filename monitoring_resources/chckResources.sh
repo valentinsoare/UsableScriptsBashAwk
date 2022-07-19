@@ -128,7 +128,7 @@ loading_print_ps() {
 
 main() {
     trap "" SIGTSTP  # ignore ctrl + z
-    trap catch_control_c SIGINT  # catch ctrl + c if you want to exit the script sooner
+    trap catch_control_c SIGINT  # catch ctrl + c and provide a msg if you want to exit the script sooner
 
     allocate_arguments
     display_header
