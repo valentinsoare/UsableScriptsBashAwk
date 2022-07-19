@@ -4,7 +4,7 @@ declare -a resources  needed_resources \
         resources_to_check array_for_sorting
 
 input_arguments="${*}"
-resources=("pid" "user" "%cpu" "%mem" "rss" "vsz" "time")
+resources=("pid" "user" "%cpu" "%mem" "rss" "vsz" "time" "cmd")
 array_for_sorting=("%cpu" "%mem" "rss" "vsz" "time")
 nr_of_cmds=1
 
@@ -52,7 +52,7 @@ display_header() {
 
 show_error() {
     printf "\033[31m%s\n\n%s\n%s\033[0m\n\n" "*ERROR - Issues with given command, please check further" \
-    "How to execute the script: ./chckResources cpu mem rss vsz time- > You need to use at least one of these arguments." \
+    "How to execute the script: ./chckResources cpu mem rss vsz time- > You need to use at least one of these arguments. Additional you can add pid, user and cmd" \
     "Also if you want to terminate the script sooner, you can use ctrl + c."
     tput cnorm
     exit 1
@@ -65,25 +65,34 @@ allocate_arguments() {
 }
 
 check_arguments() {
+    count_for_sort=0
     count=0
+    
     for i in "${needed_resources[@]}"; do  
         if [[ ${i} == "cpu" || ${i} == "mem" ]]; then
-            resources_to_check+=( "%${i}" ) 
+            resources_to_check+=( "%${i}" )
+            ((count++))
         elif [[ "${resources[*]}" =~ ${i} ]]; then
             resources_to_check+=( "${i}" )
+            ((count++))
         fi
-        ((count++))
+
+        if [[ ${array_for_sorting[*]} =~ ${i##%} ]]; then
+            ((count_for_sort++))
+        fi
     done
 }
 
 to_default_for_resources() {
     if [[ "${count}" -eq 0 ]]; then
         resources_to_check=("${resources[@]}")
+    elif [[ "${count_for_sort}" -eq 0 ]]; then
+        resources_to_check+=("${array_for_sorting[@]}")
     fi
 }
 
 check_sanity() {
-    if [[ "${#needed_resources[@]}" -gt 7 ]]; then
+    if [[ "${#needed_resources[@]}" -gt 8 ]]; then
         show_error
     else
         check_arguments
@@ -100,21 +109,21 @@ print_ps(){
     value_to_sort="${2}"
 
     printf "\n\033[31m[\033[0m %s \033[31m]\033[0m\n\n" "- > top 10 sorted by ${to_sort_by}"
-    variable_to_print="$(ps -eo "${resources_to_check[*]}")"
+    variable_to_print="$(ps -eo "${resources_to_check[*]}" --cols "$(tput cols)")"
     printf "%s\n" "${variable_to_print}" | head -1
     printf "%s\n" "${variable_to_print}" | grep -i -v "${to_sort_by}" | sort -k"${value_to_sort}" -n | tail -10
 }
 
 loading_print_ps() {
 
-    printf "\n\n\033[31m(${nr_of_cmds})\033[0m %s \033[31m\033[0m\n\n" "ps -eo ${resources_to_check[*]}" 
+    printf "\n\n\033[31m(${nr_of_cmds})\033[0m %s \033[31m\033[0m\n\n" "ps -eo ${resources_to_check[*]}"
+    ((nr_of_cmds++)) 
 
     for ((i=0; i<${#resources_to_check[@]}; i++)); do
         if [[ "${array_for_sorting[*]}" =~ ${resources_to_check[$i]} ]]; then
             print_ps "${resources_to_check[$i]}" "$((i + 1))"
         fi
     done
-
 }
 
 main() {
@@ -124,7 +133,6 @@ main() {
     allocate_arguments
     display_header
     check_sanity
-    
     loading_print_ps
 
     tput cnorm
