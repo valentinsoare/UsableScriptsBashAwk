@@ -11,7 +11,7 @@ control_c() {
 to_exec() {
     start="$(date +%s)"
     sleep 1
-    sleep 4     # simulate hang 5 seconds
+    sleep 4     # simulate hang 4 seconds
     end="$(date +%s)"
 
     if [[ $((end - start)) -gt 1 ]]; then
