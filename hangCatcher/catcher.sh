@@ -10,14 +10,14 @@ control_c() {
 
 to_exec() {
     start="$(date +%s)"
-    sleep 2
-    sleep 5     # simulate hang 5 seconds
+    sleep 1
+    sleep 4     # simulate hang 5 seconds
     end="$(date +%s)"
 
-    if [[ $((end - start)) -gt 2 ]]; then
-        printf "%s" "$(date -ud @${start})"
-        printf "\n\033[1;31m %s\033[0m\n" "(${count}) HANG time: $((end - start)) seconds"
-        printf "%s\n\n" "$(date -ud @${end})"
+    if [[ $((end - start)) -gt 1 ]]; then
+        printf " %s" "$(date -ud @${start})"
+        printf "\n\033[31m %s\033[0m\n" "(${count}) HANG time: $((end - start)) seconds"
+        printf " %s\n\n" "$(date -ud @${end})"
         ((count++))
     fi
 }
