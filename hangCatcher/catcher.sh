@@ -3,6 +3,11 @@
 count=0
 number_of_hangs_to_exit="${1}"
 
+control_c() {
+    printf "\n\n\033[1;31m%s\033[0m\n\n" "**Script completed..."
+    exit 0
+}
+
 to_exec() {
     start="$(date +%s)"
     sleep 2
@@ -17,12 +22,20 @@ to_exec() {
     fi
 }
 
+#dump_to_log() {
+    
+#}
+
 main() {
+    trap "" SIGTSTP
+    trap control_c SIGINT
+
     while true; do
         to_exec
 
         if [[ "${count}" -eq "${number_of_hangs_to_exit}" ]]; then
-            exit
+            printf "\n\n\033[1;31m%s\n\n" "Script completed..."
+            exit 0
         fi
     done
 }
