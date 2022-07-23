@@ -104,7 +104,12 @@ check_sanity() {
 #prstat -s rss -c -n 50 1 1 | head -30
 #prstat -s rss -c -v -n 20 1 1
 
-print_ps(){
+#pidstat | grep -E -i -v "linux|command" | sort -k5 -n - > userland
+#pidstat | grep -E -i -v "linux|command" | sort -k6 -n - > systemland
+#pidstat | grep -E -i -v "linux|command" | sort -k8 -n - > wait
+
+
+print_ps() {
     to_sort_by="${1}"
     value_to_sort="${2}"
 
@@ -112,6 +117,21 @@ print_ps(){
     variable_to_print="$(ps -eo "${resources_to_check[*]}" --cols "$(tput cols)")"
     printf "%s\n" "${variable_to_print}" | head -1
     printf "%s\n" "${variable_to_print}" | grep -i -v "${to_sort_by}" | sort -k"${value_to_sort}" -n | tail -10
+}
+
+print_pidstat() {
+
+    printf "\n\n\n\033[31m(${nr_of_cmds})\033[0m %s \033[31m\033[0m\n\n" "pidstat"
+    command_to_execute="$(pidstat)"
+
+    keys_for_sorting=("5" "6" "8")
+    type_of_processes=("userland" "system land" "wait")
+
+    for ((i=0; i< ${#keys_for_sorting[@]}; i++)); do
+        printf "\n\033[31m[\033[0m %s \033[31m]\033[0m\n" "- > top 10 pidstat processes sorted by ${type_of_processes[$i]}"
+        printf "%s\n" "${command_to_execute}" | head -4 | grep -E -i -v "linux"
+        printf "%s\n" "${command_to_execute}" | grep -E -i -v "linux|command" | sort -k"${keys_for_sorting[$i]}" -n | tail -10
+    done
 }
 
 loading_print_ps() {
@@ -134,7 +154,7 @@ main() {
     display_header
     check_sanity
     loading_print_ps
-
+    print_pidstat
     tput cnorm
     echo -e ""
 }
