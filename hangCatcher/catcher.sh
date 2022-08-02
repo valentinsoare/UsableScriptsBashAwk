@@ -22,7 +22,7 @@ to_exec() {
 
     if [[ $((end - start)) -gt 1 ]]; then
         printf " %s" "$(date -ud @${start})"
-        printf "\n\033[31m %s\033[0m\n" "(${count}) HANG time: $((end - start)) seconds"
+        printf "\n\033[31m %s\033[0m\n" "(${count}) freeze duration: $((end - start)) seconds"
         printf " %s\n\n" "$(date -ud @${end})"
         ((count++))
     fi

@@ -113,7 +113,7 @@ print_ps() {
     to_sort_by="${1}"
     value_to_sort="${2}"
 
-    printf "\n\033[31m[\033[0m %s \033[31m]\033[0m\n\n" "- > top 10 sorted by ${to_sort_by}"
+    printf "\n\033[31m[\033[0m %s \033[31m]\033[0m\n\n" "- > top 10 ps processes sorted by ${to_sort_by}"
     variable_to_print="$(ps -eo "${resources_to_check[*]}" --cols "$(tput cols)")"
     printf "%s\n" "${variable_to_print}" | head -1
     printf "%s\n" "${variable_to_print}" | grep -i -v "${to_sort_by}" | sort -k"${value_to_sort}" -n | tail -10
@@ -136,7 +136,9 @@ print_pidstat() {
 
 loading_print_ps() {
 
-    printf "\n\n\033[31m(${nr_of_cmds})\033[0m %s \033[31m\033[0m\n\n" "ps -eo ${resources_to_check[*]}"
+    printf "\n\n\033[31m(${nr_of_cmds})\033[0m %s 
+
+\033[31m\033[0m" "ps -eo ${resources_to_check[*]}"
     ((nr_of_cmds++)) 
 
     for ((i=0; i<${#resources_to_check[@]}; i++)); do
