@@ -17,12 +17,12 @@ sanity_checks() {
 to_exec() {
     start="$(date +%s)"
     sleep 1
-    sleep 3     # simulate hang 3 seconds
+    sleep 3     # simulate hang 3 seconds. You need to remov this line in production.
     end="$(date +%s)"
 
     if [[ $((end - start)) -gt 1 ]]; then
         printf " %s" "$(date -ud @${start})"
-        printf "\n\033[31m %s\033[0m\n" "(${count}) freeze duration: $((end - start)) seconds"
+        printf "\n\033[31m %s\033[0m\n" "(${count}) freeze duration: $((end - start - 1)) seconds"
         printf " %s\n\n" "$(date -ud @${end})"
         ((count++))
     fi

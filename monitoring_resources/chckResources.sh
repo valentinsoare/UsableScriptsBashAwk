@@ -69,11 +69,8 @@ check_arguments() {
     count=0
     
     for i in "${needed_resources[@]}"; do  
-        if [[ ${i} == "cpu" || ${i} == "mem" ]]; then
+        if [[ (${i} == "cpu" || ${i} == "mem") || ("${resources[*]}" =~ ${i}) ]]; then
             resources_to_check+=( "%${i}" )
-            ((count++))
-        elif [[ "${resources[*]}" =~ ${i} ]]; then
-            resources_to_check+=( "${i}" )
             ((count++))
         fi
 
@@ -123,7 +120,7 @@ print_pidstat() {
 
     printf "\n\n\n\033[31m(${nr_of_cmds})\033[0m %s \033[31m\033[0m\n\n" "pidstat"
     command_to_execute="$(pidstat)"
-
+    
     keys_for_sorting=("5" "6" "8")
     type_of_processes=("userland" "system land" "wait")
 
@@ -162,3 +159,4 @@ main() {
 }
 
 main "${@}"
+
