@@ -126,3 +126,6 @@ endProgress_dots "${output_main}"
 logging_output "${output_main}"
 
 printf "%s\n" "${NRM_CURSOR}"
+
+# dnf whatprovides "firefox" | awk '{print $1}' | grep -E -i -v "last|repo|matched|filename|provide|^$" | uniq
+
