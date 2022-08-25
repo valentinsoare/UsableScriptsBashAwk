@@ -6,7 +6,6 @@ logging_location="${2}"
 if_using_logging=0
 file_for_output="freezes.out"
 
-
 control_c() {
     printf "\n   %s\n\n" "**Script was ended by the user..."
     exit 0
@@ -46,22 +45,20 @@ use_logging() {
     fi
 }
 
-
 execute_script() {
     trap "" SIGTSTP
     trap control_c SIGINT
 
     sanity_checks
     
-    printf "\n%25s" "**FREEZE CATCHER**"
-    
     if [[ "${if_using_logging}" -eq 1 ]]; then
-        printf "\n%25s\n%26s\n" "logging location:" "${logging_location}/${file_for_output}"
+        printf "\n%s\n%s\n" "**logging location:" "${logging_location}/${file_for_output}"
     else
-        printf "\n%24s\n" "output to screen"
+        printf "\n%s\n" "**output to screen"
     fi
 
-    printf "%20s\n" "reps: ${number_of_hangs_to_exit}"
+    printf "\n%25s" "**FREEZE CATCHER**"
+    printf "\n%20s\n" "reps: ${number_of_hangs_to_exit}"
     printf "\n%35s\n\n" " " | tr ' ' '-'
     
     while true; do
@@ -73,7 +70,6 @@ execute_script() {
         fi
     done
 }
-
 
 main() {
     use_logging "${@}"
@@ -89,6 +85,5 @@ main() {
         execute_script "${@}"
     fi
 }
-
 
 main "${@}"
