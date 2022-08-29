@@ -34,14 +34,8 @@ to_exec() {
 
 use_logging() {
     if [[ -n "${logging_location}" ]]; then 
-        if [[ -d "${logging_location}" ]]; then
-            if_using_logging=1
-        else
-            printf "\n%35s\n" " " | tr ' ' '-'
-            printf "\n%s\n\n" "  **Output directory doesn't exists."
-            printf "%35s\n\n" " " | tr ' ' '-'
-            exit 1
-        fi
+        { [[ -d "${logging_location}" ]] && if_using_logging=1; } || { printf "\n%35s\n" " " | tr ' ' '-'; printf "\n%s\n\n" "  **Output directory doesn't exists.";\
+        printf "%35s\n\n" " " | tr ' ' '-'; exit 1; }
     fi
 }
 
@@ -76,11 +70,7 @@ main() {
     complete_path="${logging_location}/${file_for_output}"
 
     if [[ "${if_using_logging}" -eq 1 ]]; then
-        if [[ -e "${complete_path}" ]]; then
-            execute_script "${@}" | tee -a "${complete_path}"
-        else
-            execute_script "${@}" | tee "${complete_path}"  
-        fi
+       { [[ -e "${complete_path}" ]] && execute_script "${@}" | tee -a "${complete_path}"; } || { execute_script "${@}" | tee "${complete_path}"; }
     else
         execute_script "${@}"
     fi
