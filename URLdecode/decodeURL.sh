@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-declare input_file invisible_cursor normal_cursor
+declare input_file invisible_cursor normal_cursor location_for_the_given_file
 declare -A converting_references
 
 input_file="${1}"
@@ -89,7 +89,6 @@ main() {
     if [[ "${location_for_the_given_file}" != "1" ]]; then
         make_bckp "${location_for_the_given_file}"
         execute_task
-        printf "\n%s\n" "✔ Encoding completed! - > Check ${entire_path_file_to_backup}"
     else
         printf "%s" "1"
     fi
@@ -118,8 +117,10 @@ exec_main() {
         exit 1
     fi
     
-    printf "\n%s\n\n" "${output_from_main}"
-    printf "%s" "${normal_cursor}" 
+    sleep 0.5
+    printf "\n%s\n" "${output_from_main}"
+    sleep 0.5
+    printf "\n%s%s\n\n" "✔ Encoding completed! Check the file." "${normal_cursor}"
 }
 
 exec_main
