@@ -73,7 +73,7 @@ make_bckp() {
         cp "${entire_path_file_to_backup}" "${directory_for_backup}/backup_${only_file_name}"
     fi
        
-    printf "%s\n%s\n" "✔ *Backup of the given file was made in parent directory." "Location: ${directory_for_backup}/backup_${only_file_name}"
+    printf "%s\n%s\n" "✔ Backup of the given file was made in parent directory." "Location: ${directory_for_backup}/backup_${only_file_name}"
 }
 
 execute_task() {
@@ -91,7 +91,7 @@ main() {
     if [[ "${location_for_the_given_file}" != "1" ]]; then
         make_bckp "${location_for_the_given_file}"
         execute_task
-        printf "\n%s\n" "✔ **Encoding completed! - > Check ${entire_path_file_to_backup}"
+        printf "\n%s\n" "✔ Encoding completed! - > Check ${entire_path_file_to_backup}"
     else
         printf "%s" "1"
     fi
