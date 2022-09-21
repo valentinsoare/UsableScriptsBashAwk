@@ -13,7 +13,7 @@ control_c() {
 
 sanity_checks() {
     if [[ -z "${number_of_hangs_to_exit}" ]]; then
-        number_of_hangs_to_exit=30                       # number of hangs default to catch in case there is no input parameter
+        number_of_hangs_to_exit=10                       # number of hangs default to catch in case there is no input parameter
     fi
 }
 
@@ -34,8 +34,8 @@ to_exec() {
 
 use_logging() {
     if [[ -n "${logging_location}" ]]; then 
-        { [[ -d "${logging_location}" ]] && if_using_logging=1; } || { printf "\n%35s\n" " " | tr ' ' '-'; printf "\n%s\n\n" "  **Output directory doesn't exists.";\
-        printf "%35s\n\n" " " | tr ' ' '-'; exit 1; }
+        { [[ -d "${logging_location}" ]] && if_using_logging=1; } || { printf "\n%35s\n" " " | tr ' ' '-'; \
+        printf "\n%s\n\n" "  **Output directory doesn't exists."; printf "%35s\n\n" " " | tr ' ' '-'; exit 1; }
     fi
 }
 

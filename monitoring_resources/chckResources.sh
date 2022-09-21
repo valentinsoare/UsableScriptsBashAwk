@@ -105,7 +105,6 @@ check_sanity() {
 #pidstat | grep -E -i -v "linux|command" | sort -k6 -n - > systemland
 #pidstat | grep -E -i -v "linux|command" | sort -k8 -n - > wait
 
-
 print_ps() {
     to_sort_by="${1}"
     value_to_sort="${2}"
@@ -133,9 +132,7 @@ print_pidstat() {
 
 loading_print_ps() {
 
-    printf "\n\n\033[31m(${nr_of_cmds})\033[0m %s 
-
-\033[31m\033[0m" "ps -eo ${resources_to_check[*]}"
+    printf "\n\n\033[31m(${nr_of_cmds})\033[0m %s \033[31m\033[0m" "ps -eo ${resources_to_check[*]}"
     ((nr_of_cmds++)) 
 
     for ((i=0; i<${#resources_to_check[@]}; i++)); do
@@ -159,4 +156,3 @@ main() {
 }
 
 main "${@}"
-

@@ -66,10 +66,10 @@ main() {
     printf "%s" "${inv_cursor}"
 
     #First type of graphical output at the beginning while the findfile command is doing his work.
-    exec_printing_signs
+    #exec_printing_signs
 
     #Second version like the one from above.
-    #exec_printing_signs
+    exec_printing_dots
 
     #Open the SR
     cd "${findfile_command}"
