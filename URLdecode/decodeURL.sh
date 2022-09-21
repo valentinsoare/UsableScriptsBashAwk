@@ -63,8 +63,6 @@ make_bckp() {
     entire_path_file_to_backup="${1}"
     directory_for_backup="${entire_path_file_to_backup%/*}"
     only_file_name="${entire_path_file_to_backup##*/}"
-    
-    sleep 0.5
 
     if [[ -e "${directory_for_backup}/backup_${only_file_name}" ]]; then
         rm -f "${directory_for_backup}/backup_${only_file_name}"
@@ -72,7 +70,7 @@ make_bckp() {
     else
         cp "${entire_path_file_to_backup}" "${directory_for_backup}/backup_${only_file_name}"
     fi
-       
+    
     printf "%s\n%s\n" "✔ Backup of the given file was made in parent directory." "Location: ${directory_for_backup}/backup_${only_file_name}"
 }
 
