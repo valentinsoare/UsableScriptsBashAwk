@@ -39,7 +39,7 @@ printing_header() {
 
 checking_arguments() {
     if [[ -z "${input_file}" ]]; then
-        sleep 4
+        sleep 3
         printf "\n%s%s" " ERROR - You need to provide a valid file as an argument with a list of URLs to parse." "${normal_cursor}"
         exit 1
     fi
@@ -65,6 +65,7 @@ make_bckp() {
     only_file_name="${entire_path_file_to_backup##*/}"
     
     sleep 0.5
+
     if [[ -e "${directory_for_backup}/backup_${only_file_name}" ]]; then
         rm -f "${directory_for_backup}/backup_${only_file_name}"
         cp "${entire_path_file_to_backup}" "${directory_for_backup}/backup_${only_file_name}"
@@ -86,15 +87,14 @@ main() {
 
     checking_arguments
     location_for_the_given_file=$(exec_find_location "${file_location}")
-    
-    if [[ ${location_for_the_given_file} -ne "1" ]]; then
+
+    if [[ "${location_for_the_given_file}" != "1" ]]; then
         make_bckp "${location_for_the_given_file}"
         execute_task
         printf "\n%s\n" "✔ **Encoding completed! - > Check ${entire_path_file_to_backup}"
     else
         printf "%s" "1"
     fi
-
 }
 
 ending_dots() {               
@@ -115,8 +115,8 @@ exec_main() {
     output_from_main=$(main "${input_file}")
     ending_dots
 
-    if [[ ${output_from_main} -eq 1 ]]; then
-        printf "\n%s\n\n%s" " ERROR - given file was not found! Please try again." "${normal_cursor}"
+    if [[ ${output_from_main} == "1" ]]; then
+        printf "\n\n%s\n\n%s" " ERROR - given file was not found! Please try again." "${normal_cursor}"
         exit 1
     fi
     
