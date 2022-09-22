@@ -4,7 +4,7 @@ declare input_file invisible_cursor normal_cursor location_for_the_given_file
 declare -A converting_references
 
 input_file="${1}"
-converting_references=([%2A]="*" [%2B]="+" [%2C]="," [%2D]="-" [%2E]="." [%2F]='/')
+converting_references=([%2A]="*" [%2B]="+" [%2C]="," [%2D]="-" [%2E]="." [%2F]='/')          # you need to add more characters to this dictionary
 invisible_cursor=$(tput civis)
 normal_cursor=$(tput cnorm)
 
@@ -112,15 +112,13 @@ exec_main() {
     output_from_main=$(main "${input_file}")
     ending_dots
 
-    if [[ ${output_from_main} == "1" ]]; then
-        printf "\n\n%s\n\n%s" " ERROR - given file was not found! Please try again." "${normal_cursor}"
-        exit 1
-    fi
+    [[ "${output_from_main}" == "1" ]] && { printf "\n\n%s\n\n%s" " ERROR - given file was not found! Please try again." "${normal_cursor}"; exit 1; }
     
     sleep 0.5
-    printf "\n%s\n" "${output_from_main}"
+    printf "\n%s\n\n" "${output_from_main}"
+    
     sleep 0.5
-    printf "\n%s%s\n\n" "✔ Encoding completed! Check the file." "${normal_cursor}"
+    [[ "${output_from_main}" != "1" ]] && { printf "\n%s%s\n\n" "✔ Encoding completed! Check the file." "${normal_cursor}"; }
 }
 
 exec_main
