@@ -1,14 +1,22 @@
 #!/usr/bin/bash
 
+<<<<<<< HEAD
+=======
+declare input_file invisible_cursor normal_cursor location_for_the_given_file
+>>>>>>> b0036cd3e3cddda07f14c5f0b508019b2467764c
 declare -A converting_references
 declare input_file invisible_cursor normal_cursor location_for_the_given_file
 
 input_file="${1}"
+<<<<<<< HEAD
 time_to_sleep="${2}"
 
 # you need to add more characters to this dictionary.
 converting_references=([%2A]="*" [%2B]='+' [%2C]=',' [%2D]='-' [%2E]='.' [%2F]='/' [%3A]=':' [%3B]=';' [%3C]='<' [%3D]='=' [%3E]='>' [%3F]='?')
 
+=======
+converting_references=([%2A]="*" [%2B]="+" [%2C]="," [%2D]="-" [%2E]="." [%2F]='/')          # you need to add more characters to this dictionary
+>>>>>>> b0036cd3e3cddda07f14c5f0b508019b2467764c
 invisible_cursor=$(tput civis)
 normal_cursor=$(tput cnorm)
 
@@ -84,12 +92,17 @@ make_bckp() {
         cp "${entire_path_file_to_backup}" "${directory_for_backup}/backup_${only_file_name}"
     fi
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     printf "%s\n%s\n" "✔ Backup of the given file was made in parent directory." "Location: ${directory_for_backup}/backup_${only_file_name}"
 =======
        
     printf "%s\n%s\n" "✔ *Backup of the given file was made in parent directory." "Location: ${directory_for_backup}/backup_${only_file_name}"
 >>>>>>> parent of 350a62f (commit checks added)
+=======
+    
+    printf "%s\n%s\n" "✔ Backup of the given file was made in parent directory." "Location: ${directory_for_backup}/backup_${only_file_name}"
+>>>>>>> b0036cd3e3cddda07f14c5f0b508019b2467764c
 }
 
 # Here we execute the main task. We parse the keys from dictionary and then we use sed to replace key - value from dict.
@@ -99,6 +112,23 @@ execute_task() {
     done
 }
 
+<<<<<<< HEAD
+=======
+main() {
+    file_location="${1}"
+
+    checking_arguments
+    location_for_the_given_file=$(exec_find_location "${file_location}")
+
+    if [[ "${location_for_the_given_file}" != "1" ]]; then
+        make_bckp "${location_for_the_given_file}"
+        execute_task
+    else
+        printf "%s" "1"
+    fi
+}
+
+>>>>>>> b0036cd3e3cddda07f14c5f0b508019b2467764c
 ending_dots() {               
     { kill "${!}"; wait "${!}"; } 2> /dev/null
     sleep 0.2
@@ -143,10 +173,14 @@ exec_main() {
     printf "\n%s\n\n" "${output_from_main}"
     
     sleep 0.5
+<<<<<<< HEAD
     number_of_lines="$(echo -e "${output_from_main}" | wc -l)"
     if [[ ${number_of_lines} != "1" ]]; then
         printf "\n%s%s\n\n" "✔ Encoding completed! Check the file." "${normal_cursor}"
     fi
+=======
+    [[ "${output_from_main}" != "1" ]] && { printf "\n%s%s\n\n" "✔ Encoding completed! Check the file." "${normal_cursor}"; }
+>>>>>>> b0036cd3e3cddda07f14c5f0b508019b2467764c
 }
 
 exec_main
