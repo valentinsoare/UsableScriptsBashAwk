@@ -15,8 +15,8 @@ converting_references=([%2A]="*" [%2B]='+' [%2C]=',' [%2D]='-' [%2E]='.' [%2F]='
 # Check if valid arguments were given when the script was lunched. If not, an error will appear.
 check_arguments() {
     if [[ ${#} -ne 2 || -z "${time_to_sleep}" ]]; then
-        printf "\n%s%s\n\n" " ERROR - You need to use two arguments for this script. 
-         First is the file and second is the how many seconds to wait between progress dots" "${normal_cursor}"
+        printf "\n%s%s\n" " ERROR - you need to use two arguments for this script. 
+        First is the file and second is the how many seconds to wait betwheen progress dots" "${normal_cursor}"
         exit 1
     fi
 }
@@ -50,6 +50,7 @@ main() {
 
     printing_header "URL decoder v0.1"
     check_arguments "${@}"
+
 }
 
 main "${@}"
