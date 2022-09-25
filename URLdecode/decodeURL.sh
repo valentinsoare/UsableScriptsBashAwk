@@ -54,7 +54,7 @@ printing_header() {
 checking_arguments() {
     if [[ -z "${input_file}" ]]; then
         sleep 3
-        printf "\n%s%s" " ERROR - You need to provide a valid file as an argument with a list of URLs to parse." "${normal_cursor}"
+        printf "%s%s" " ERROR - You need to provide a valid file as an argument with a list of URLs to parse." "${normal_cursor}"
         exit 1
     fi
 }

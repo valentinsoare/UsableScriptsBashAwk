@@ -14,11 +14,17 @@ converting_references=([%2A]="*" [%2B]='+' [%2C]=',' [%2D]='-' [%2E]='.' [%2F]='
 
 # Check if valid arguments were given when the script was lunched. If not, an error will appear.
 check_arguments() {
-    if [[ ${#} -ne 2 || -z "${time_to_sleep}" ]]; then
-        printf "\n%s%s\n" " ERROR - you need to use two arguments for this script. 
-        First is the file and second is the how many seconds to wait betwheen progress dots" "${normal_cursor}"
+  
+    if [[ ${#} -lt 1 ]]; then
+        printf "%s\n%s\n" ' ERROR - you need to use two arguments for this script.
+        First is the file and the next is how many seconds to wait beetween progress dots. 
+        Now if the second argument is not given or is not a number, then script will set wait time to 0.5 seconds.' "${normal_cursor}"
         exit 1
     fi
+
+    if [[ -z "${time_to_sleep}" || ${time_to_sleep} != ?(-)+([[:digit:]])  ]]; then
+        time_to_sleep=0.5
+    fi 
 }
 
 #header with namee of the script and current date, hour
