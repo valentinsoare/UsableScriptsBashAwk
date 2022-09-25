@@ -130,7 +130,7 @@ main() {
     if [[ "${location_for_the_given_file}" != "1" ]]; then
         make_bckp "${location_for_the_given_file}"
         execute_task
-        printf "\n%s\n" "✔ **Encoding completed! - > Check ${entire_path_file_to_backup}"
+        printf "\n%s\n" "✔ Encoding completed! - > Check ${entire_path_file_to_backup}"
 
     else
         printf "%s" "1"
@@ -154,7 +154,7 @@ exec_main() {
     printf "\n%s\n\n" "${output_from_main}"
 
     printf "%s" "${normal_cursor}"
-    
+
 }
 
 exec_main
