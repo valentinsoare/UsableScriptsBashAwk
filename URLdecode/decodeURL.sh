@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-declare input_file invisible_cursor normal_cursor location_for_the_given_file
-
 declare -A converting_references
 declare input_file invisible_cursor normal_cursor location_for_the_given_file
 
@@ -9,9 +7,6 @@ input_file="${1}"
 
 # you need to add more characters to this dictionary.
 converting_references=([%2A]="*" [%2B]='+' [%2C]=',' [%2D]='-' [%2E]='.' [%2F]='/' [%3A]=':' [%3B]=';' [%3C]='<' [%3D]='=' [%3E]='>' [%3F]='?')
-
-
-converting_references=([%2A]="*" [%2B]="+" [%2C]="," [%2D]="-" [%2E]="." [%2F]='/')          # you need to add more characters to this dictionary
 
 invisible_cursor=$(tput civis)
 normal_cursor=$(tput cnorm)
