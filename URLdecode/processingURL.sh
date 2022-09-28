@@ -1,15 +1,18 @@
 #!/usr/bin/bash
 
-declare -A converting_references
-declare input_file invisible_cursor normal_cursor number_of_lines location_file where_to_read
+declare input_file invisible_cursor normal_cursor number_of_lines \
+            location_file where_to_read characters_count list_with_keys list_with_values
 
 input_file="${1}"
 time_to_sleep="${2}"
 normal_cursor=$(tput cnorm)
 invisible_cursor=$(tput civis)
+characters_count="None"
 
-# You need to add more characters to this dictionary.
-converting_references=([%2A]="*" [%2B]='+' [%2C]=',' [%2D]='-' [%2E]='.' [%2F]='/' [%3A]=':' [%3B]=';' [%3C]='<' [%3D]='=' [%3E]='>' [%3F]='?')
+# You need to add more characters to both lists.
+list_with_keys=("%2A" "%2B" "%2C" "%2D" "%2E" "%2F" "%3A" "%3B" "%3C" "%3D" "%3E" "%3F")
+list_with_values=('*' '+' ',' '-' '.' '/' ':' ';' '<' '=' '>' '?')
+
 
 # Search for the file and print entire path if found and 1 if it is not.
 locate_the_file() {
@@ -43,12 +46,14 @@ check_availibility() {
 
 # check the number of lines from the file and set the waiting period between dots
 wait_period_from_file() {
-    if [[ ${number_of_lines} -ge 1000 ]]; then
+    if [[ ${number_of_lines} -ge 2000 ]]; then
+        time_to_sleep=2
+    elif [[ ${number_of_lines} -ge 1000 ]]; then
         time_to_sleep=1
     elif [[ ${number_of_lines} -ge 700 ]]; then
-        time_to_sleep=0.7
-    else
         time_to_sleep=0.5
+    else
+        time_to_sleep=0.3
     fi
 }
 
@@ -92,7 +97,7 @@ catch_control_c() {
 }
 
 # Make a backup of the initial file. In case already exists, then delete the backup and create another one.
-make_bckp() {
+make_backup() {
     entire_path_file_to_backup="${where_to_read}"
     directory_for_backup="${entire_path_file_to_backup%/*}"
     only_file_name="${entire_path_file_to_backup##*/}"
@@ -104,8 +109,9 @@ make_bckp() {
         cp "${entire_path_file_to_backup}" "${directory_for_backup}/backup_${only_file_name}"
     fi
     
+    sleep 0.5
     echo -en "\n \U2705"
-    printf "%s\n%s\n\n" " Backup of the given file was made in parent directory." "    Location: ${directory_for_backup}/backup_${only_file_name}"
+    printf "%s\n%s\n" " Backup of the given file was made in parent directory." "    Location: ${directory_for_backup}/backup_${only_file_name}"
 }
 
 # Print dots whil all the magic happens in the background.
@@ -113,7 +119,14 @@ progress_dots() {
     local sleepTime="${1}"
     local typeP="${2}"
     local message="${3}"
-    
+    local in_front=${4}
+
+    if [[ ${in_front} -eq 0 ]]; then
+        echo -en " \U1F50E"
+    else
+        echo -en " \U1FA9B"
+    fi
+
     echo -n " ${message}"
 
     while true; do
@@ -132,30 +145,83 @@ ending_dots() {
     sleep 0.2
 }
 
-# Main function where we call all the entire script logic,
+# Execute the main task on the given file using the entire path and print the success message.
+execute_task_and_logging() {
+    local last_character_to_check
+
+    if [[ ! -e ${directory_for_backup}/url_processing.log ]]; then
+        touch "${directory_for_backup}"/url_processing.log
+        printf "\n%s\n" " *How many lines we have and how many characters per each type we replaced: " >> "${directory_for_backup}"/url_processing.log
+        printf "%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
+    fi
+
+    printf "%s" " $(date) - > " >> "${directory_for_backup}"/url_processing.log    
+
+    length_of_list_keys="${#list_with_keys[@]}"
+
+    for (( i=0; i<length_of_list_keys; i++ )); do
+        value_count=$(grep -E -i -c "${list_with_keys[i]}" "${where_to_read}")
+        last_character_to_check="${list_with_keys[i]}"
+        if [[ ${value_count} -ne 0 ]]; then
+            sed -i -e "s|${list_with_keys[i]}|${list_with_values[i]}|g" "${where_to_read}" 2> /dev/null
+            ((characters_count++))
+            printf " %s" "[${list_with_keys[i]}]=${value_count} |" >> "${directory_for_backup}"/url_processing.log
+        fi
+    done
+
+    if [[ ${characters_count} -eq 0 ]]; then
+        printf "%s" " No characters replaced." >> "${directory_for_backup}"/url_processing.log
+    fi
+
+    printf "\n *%s" " From file, lines: ${number_of_lines}, characters type replaced: ${characters_count}, last character checked from the keys list: ${last_character_to_check}" >> "${directory_for_backup}"/url_processing.log
+    printf "\n%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
+
+    echo -en "\n \U2705"
+    printf "%s\n%113s" " All lines were processed with success." "Please access the file: ${where_to_read}"
+}
+
+# Moving the cursor down in the terminal
+moving_down_the_line() {
+    input_value="${1}"
+
+    for ((i=0; i<=input_value; i++)); do
+        tput cud1
+    done
+}
+
+# Main function where we call all the entire script logic.
 main() {
     trap "" SIGTSTP
     trap catch_control_c SIGINT
-    
     printf "%s" "${invisible_cursor}"
 
     printing_header "URL decoder v0.1"
     check_arguments "${@}"
-    echo -en " \U1F50E"
-    progress_dots "${time_to_sleep}" "." "Searching" &
+    
+    tput sc               # save position.
+    
+    # Part where searching is executed.
+    progress_dots "${time_to_sleep}" "." "Searching" "0" &
     where_to_read="$(locate_the_file)"
     ending_dots
     check_availibility
-    make_bckp
-
+    make_backup
     checking_nr_lines
     wait_period_from_file
-    echo -en " \U1FA9B"
-    progress_dots "${time_to_sleep}" "." "Executing" &
-    sleep 10
+    
+    tput rc               # restore position.
+    tput el               # delete from the cursor to the end of the line.
+    
+    # Here we execute the main task. Like replace the end of each URL from the given file.
+    progress_dots "${time_to_sleep}" "." "Executing" "1" &
+    sleep 5
+    complete_main_task=$(execute_task_and_logging)
     ending_dots
+    moving_down_the_line 2       # move down the cursor.
+    printf "%s" "${complete_main_task}"
 
-    printf "%s" "${normal_cursor}"
+    printf "%s\n\n" "${normal_cursor}"
 }
 
+# Execute main function.
 main "${@}"

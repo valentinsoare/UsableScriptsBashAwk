@@ -1,0 +1,21 @@
+
+ *How many lines we have and how many characters per each type we replaced: 
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 01:43:38 AM EEST 2022 - >  No characters replaced.
+ * From file: lines: 7, characters replaced: None, last character checked: %2C
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 01:46:43 AM EEST 2022 - >  No characters replaced.
+ * From file: lines: 7, characters replaced: 0, last character checked: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 01:48:21 AM EEST 2022 - >  No characters replaced.
+ * From file: lines: 7, characters replaced: 0, last character checked: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 01:52:23 AM EEST 2022 - >  [%2A]=2 | [%3D]=3 | [%3F]=1 |
+ * From file: lines: 7, characters replaced: 3, last character checked: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 01:54:52 AM EEST 2022 - >  No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 01:58:06 AM EEST 2022 - >  No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
