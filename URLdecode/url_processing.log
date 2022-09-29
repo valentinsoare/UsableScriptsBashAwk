@@ -1,21 +1,73 @@
 
  *How many lines we have and how many characters per each type we replaced: 
 ----------------------------------------------------------------------------------------------------
- Thu Sep 29 01:43:38 AM EEST 2022 - >  No characters replaced.
- * From file: lines: 7, characters replaced: None, last character checked: %2C
+ Thu Sep 29 04:39:55 PM EEST 2022 - >  [%2A]=3 | [%2B]=2 | [%3D]=1 |
+ * From file, lines: 7, characters type replaced: 3, last character checked from the keys list: %3F
 ----------------------------------------------------------------------------------------------------
- Thu Sep 29 01:46:43 AM EEST 2022 - >  No characters replaced.
- * From file: lines: 7, characters replaced: 0, last character checked: %3F
+ Thu Sep 29 04:40:52 PM EEST 2022 - > %2A
+ [%2A]=3 |%2B
+ [%2B]=2 |%3D
+ [%3D]=1 |
+ * From file, lines: 7, characters type replaced: 3, last character checked from the keys list: %3F
 ----------------------------------------------------------------------------------------------------
- Thu Sep 29 01:48:21 AM EEST 2022 - >  No characters replaced.
- * From file: lines: 7, characters replaced: 0, last character checked: %3F
-----------------------------------------------------------------------------------------------------
- Thu Sep 29 01:52:23 AM EEST 2022 - >  [%2A]=2 | [%3D]=3 | [%3F]=1 |
- * From file: lines: 7, characters replaced: 3, last character checked: %3F
-----------------------------------------------------------------------------------------------------
- Thu Sep 29 01:54:52 AM EEST 2022 - >  No characters replaced.
+ Thu Sep 29 04:42:41 PM EEST 2022 - >  No characters replaced.
  * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
 ----------------------------------------------------------------------------------------------------
- Thu Sep 29 01:58:06 AM EEST 2022 - >  No characters replaced.
+ Thu Sep 29 04:53:48 PM EEST 2022 - > 
+
  * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 04:54:59 PM EEST 2022 - > 
+
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 04:55:51 PM EEST 2022 - > 
+
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 04:56:12 PM EEST 2022 - > 
+ No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 04:56:47 PM EEST 2022 - >  No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 04:58:41 PM EEST 2022 - >  No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 05:03:09 PM EEST 2022 - >  No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 05:05:31 PM EEST 2022 - >  No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 05:06:05 PM EEST 2022 - >  No characters replaced.
+ * From file, lines: 7, characters type replaced: None, last character checked from the keys list: %3F
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 06:01:06 PM EEST 2022 - >  None [%2A]=7 | [%2B]=7 | [%2C]=7 | [%2D]=7 | [%2E]=7 | [%2F]=7 | [%3A]=7 | [%3B]=7 | [%3C]=7 | [%3D]=7 | [%3E]=7 | [%3F]=7 |
+ * From file, lines: 7, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 06:05:52 PM EEST 2022 - > * Characters to be replaced: | None
+** Characters that were converted:  [%2A]=7 | [%2B]=7 | [%2C]=7 | [%2D]=7 | [%2E]=7 | [%2F]=7 | [%3A]=7 | [%3B]=7 | [%3C]=7 | [%3D]=7 | [%3E]=7 | [%3F]=7 |
+ * From file, lines: 7, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ Thu Sep 29 06:08:05 PM EEST 2022 - > 
+ *Characters to be replaced:  None
+ **Characters that were converted: 
+ * From file, lines: 7, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+                  Thu Sep 29 06:12:00 PM EEST 2022
+ *Characters to be replaced:  None
+ **Characters that were converted:  None
+ ***From file, lines: 7, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+  Thu Sep 29 06:13:23 PM EEST 2022
+ *Characters to be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 7, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Thu Sep 29 06:14:08 PM EEST 2022
+ *Characters to be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 7, characters type replaced: None
 ----------------------------------------------------------------------------------------------------

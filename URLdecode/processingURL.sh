@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
+declare -a list_with_keys list_with_values list_with_chrs_text
 declare input_file invisible_cursor normal_cursor number_of_lines \
-            location_file where_to_read characters_count list_with_keys list_with_values
+            location_file where_to_read characters_count
 
 input_file="${1}"
 time_to_sleep="${2}"
@@ -71,7 +72,7 @@ check_arguments() {
     fi
 
     if [[ -z "${time_to_sleep}" || ! "${time_to_sleep}" =~ ^([[:digit:]]{1,}||[[:digit:]]{1,}\.[[:digit:]]{1,})$ ]]; then
-        time_to_sleep=0.5
+        time_to_sleep=0.3       # time to sleep (0.3 seconds) between dots when searcing in case user doesn't give the second argument.
     fi
 }
 
@@ -145,9 +146,16 @@ ending_dots() {
     sleep 0.2
 }
 
+# Printing None if no activit was done
+action_when_no_activity_for_logs() {
+    if [[ ${characters_count} -eq 0 ]]; then
+        printf "%s" "None" >> "${directory_for_backup}"/url_processing.log
+    fi
+}
+
+
 # Execute the main task on the given file using the entire path and print the success message.
 execute_task_and_logging() {
-    local last_character_to_check
 
     if [[ ! -e ${directory_for_backup}/url_processing.log ]]; then
         touch "${directory_for_backup}"/url_processing.log
@@ -155,25 +163,33 @@ execute_task_and_logging() {
         printf "%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
     fi
 
-    printf "%s" " $(date) - > " >> "${directory_for_backup}"/url_processing.log    
+    printf "%s" " - > $(date)" >> "${directory_for_backup}"/url_processing.log    
 
     length_of_list_keys="${#list_with_keys[@]}"
 
-    for (( i=0; i<length_of_list_keys; i++ )); do
-        value_count=$(grep -E -i -c "${list_with_keys[i]}" "${where_to_read}")
-        last_character_to_check="${list_with_keys[i]}"
-        if [[ ${value_count} -ne 0 ]]; then
-            sed -i -e "s|${list_with_keys[i]}|${list_with_values[i]}|g" "${where_to_read}" 2> /dev/null
+    printf "\n%s" " *Characters to be replaced: " >> "${directory_for_backup}"/url_processing.log
+    for ((j=0; j<length_of_list_keys; j++)); do
+        if grep -q "${list_with_keys[j]}" "${where_to_read}"; then
             ((characters_count++))
-            printf " %s" "[${list_with_keys[i]}]=${value_count} |" >> "${directory_for_backup}"/url_processing.log
+            printf "%s" "" " ${list_with_keys[j]} |"
         fi
     done
 
-    if [[ ${characters_count} -eq 0 ]]; then
-        printf "%s" " No characters replaced." >> "${directory_for_backup}"/url_processing.log
-    fi
+    action_when_no_activity_for_logs
 
-    printf "\n *%s" " From file, lines: ${number_of_lines}, characters type replaced: ${characters_count}, last character checked from the keys list: ${last_character_to_check}" >> "${directory_for_backup}"/url_processing.log
+    printf "\n%s" " **Characters that were converted: " >> "${directory_for_backup}"/url_processing.log
+
+    for (( i=0; i<length_of_list_keys; i++ )); do
+        value_count=$(grep -E -i -c "${list_with_keys[i]}" "${where_to_read}")
+        if [[ ${value_count} -ne 0 ]]; then
+            sed -i -e "s|${list_with_keys[i]}|${list_with_values[i]}|g" "${where_to_read}" 2> /dev/null
+            printf "%s" " [${list_with_keys[i]}]=${value_count} |" >> "${directory_for_backup}"/url_processing.log
+        fi
+    done
+
+    action_when_no_activity_for_logs
+
+    printf "\n%s" " ***From file, lines: ${number_of_lines}, characters type replaced: ${characters_count}" >> "${directory_for_backup}"/url_processing.log
     printf "\n%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
 
     echo -en "\n \U2705"
