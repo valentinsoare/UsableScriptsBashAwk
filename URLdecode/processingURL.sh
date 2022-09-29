@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-declare -a list_with_keys list_with_values list_with_chrs_text
+declare -a list_with_keys list_with_values
 declare input_file invisible_cursor normal_cursor number_of_lines \
             location_file where_to_read characters_count
 
