@@ -149,10 +149,9 @@ ending_dots() {
 # Printing None if no activit was done
 action_when_no_activity_for_logs() {
     if [[ ${characters_count} -eq 0 ]]; then
-        printf "%s" "None"
+        printf "%s" "None" >> "${directory_for_backup}"/url_processing.log
     fi
 }
-
 
 # Execute the main task on the given file using the entire path and print the success message and create/populate logs. Where we have # at the end of the line in function
 # that message will appear in logs.
@@ -160,38 +159,44 @@ execute_task_and_logging() {
 
     if [[ ! -e ${directory_for_backup}/url_processing.log ]]; then
         touch "${directory_for_backup}"/url_processing.log
-        printf "\n%s\n" " *How many lines we have and how many characters per each type we replaced: " #
-        printf "%100s\n" " " | tr ' ' '-'     #
+        printf "\n%s\n" " *How many lines we have and how many characters per each type we replaced: " >> "${directory_for_backup}"/url_processing.log
+        printf "%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
     fi
 
-    printf "%s" " - > $(date)"                 #
+    printf "%s" " - > $(date)" >> "${directory_for_backup}"/url_processing.log                 
 
     length_of_list_keys="${#list_with_keys[@]}"
 
-    printf "\n%s" " *Characters to be replaced: "    #
+    printf "\n%s" " *Characters to be replaced: " >> "${directory_for_backup}"/url_processing.log
     for ((j=0; j<length_of_list_keys; j++)); do
         if grep -q "${list_with_keys[j]}" "${where_to_read}"; then
             ((characters_count++))
-            printf "%s" "" " ${list_with_keys[j]} |"   #
+            printf "%s" "" " ${list_with_keys[j]} |" >> "${directory_for_backup}"/url_processing.log
         fi
     done
 
     action_when_no_activity_for_logs
 
-    printf "\n%s" " **Characters that were converted: "   #
+    printf "\n%s" " **Characters that were converted: " >> "${directory_for_backup}"/url_processing.log
 
     for (( i=0; i<length_of_list_keys; i++ )); do
         value_count=$(grep -E -i -c "${list_with_keys[i]}" "${where_to_read}")
         if [[ ${value_count} -ne 0 ]]; then
             sed -i -e "s|${list_with_keys[i]}|${list_with_values[i]}|g" "${where_to_read}" 2> /dev/null
-            printf "%s" " [${list_with_keys[i]}]=${value_count} |"    #
+            printf "%s" " [${list_with_keys[i]}]=${value_count} |" >> "${directory_for_backup}"/url_processing.log
         fi
     done
 
     action_when_no_activity_for_logs
 
-    printf "\n%s" " ***From file, lines: ${number_of_lines}, characters type replaced: ${characters_count}"    #
-    printf "\n%100s\n" " " | tr ' ' '-'     #
+    printf "\n%s" " ***From file, lines: ${number_of_lines}, characters type replaced: ${characters_count}" >> "${directory_for_backup}"/url_processing.log
+    printf "\n%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
+
+    echo -en "\n \U2705"
+    printf "%s\n%113s\n\n" " All lines were processed with success." "Please access the file: ${where_to_read}"
+
+    echo -en " \U2705"
+    printf "%s\n\n" " For logs see: ${directory_for_backup}/url_processing.log "
 }
 
 # Moving the cursor down in the terminal
@@ -208,6 +213,8 @@ main() {
     trap "" SIGTSTP
     trap catch_control_c SIGINT
     printf "%s" "${invisible_cursor}"
+
+    clear                # when we execute the script command line interface is cleared.
 
     printing_header "URL decoder v0.1"
     check_arguments "${@}"
@@ -229,7 +236,7 @@ main() {
     # Here we execute the main task. Like replace the end of each URL from the given file.
     progress_dots "${time_to_sleep}" "." "Executing" "1" &
     sleep 5
-    complete_main_task=$(execute_task_and_logging >> "${directory_for_backup}"/url_processing.log; echo -en "\n \U2705"; printf "%s\n%113s" " All lines were processed with success." "Please access the file: ${where_to_read}")
+    complete_main_task=$(execute_task_and_logging)
     ending_dots
     moving_down_the_line 2       # move down the cursor.
     printf "%s" "${complete_main_task}"
