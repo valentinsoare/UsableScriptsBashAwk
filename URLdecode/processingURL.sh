@@ -4,16 +4,15 @@ declare -a list_with_keys list_with_values
 declare input_file invisible_cursor normal_cursor number_of_lines \
             location_file where_to_read characters_count
 
-input_file="${1}"
+input_file="${1}"                
 time_to_sleep="${2}"
 normal_cursor=$(tput cnorm)
 invisible_cursor=$(tput civis)
 characters_count="None"
 
-# You need to add more characters to both lists.
+# You can add more characters to both lists. Please use this link - https://www.w3schools.com/tags/ref_urlencode.ASP - to see the encoding reference. 
 list_with_keys=("%2A" "%2B" "%2C" "%2D" "%2E" "%2F" "%3A" "%3B" "%3C" "%3D" "%3E" "%3F")
 list_with_values=('*' '+' ',' '-' '.' '/' ':' ';' '<' '=' '>' '?')
-
 
 # Search for the file and print entire path if found and 1 if it is not.
 locate_the_file() {
@@ -120,7 +119,7 @@ progress_dots() {
     local sleepTime="${1}"
     local typeP="${2}"
     local message="${3}"
-    local in_front=${4}
+    local in_front="${4}"
 
     if [[ ${in_front} -eq 0 ]]; then
         echo -en " \U1F50E"
@@ -154,7 +153,7 @@ action_when_no_activity_for_logs() {
 }
 
 # Execute the main task on the given file using the entire path and print the success message and create/populate logs. Where we have # at the end of the line in function
-# that message will appear in logs.
+# that message will appear in logs. Also at the end of the script some messages will appear and are printed with this function.
 execute_task_and_logging() {
 
     if [[ ! -e ${directory_for_backup}/url_processing.log ]]; then
@@ -167,7 +166,7 @@ execute_task_and_logging() {
 
     length_of_list_keys="${#list_with_keys[@]}"
 
-    printf "\n%s" " *Characters to be replaced: " >> "${directory_for_backup}"/url_processing.log
+    printf "\n%s" " *To be replaced: " >> "${directory_for_backup}"/url_processing.log
     for ((j=0; j<length_of_list_keys; j++)); do
         if grep -q "${list_with_keys[j]}" "${where_to_read}"; then
             ((characters_count++))
@@ -210,23 +209,26 @@ moving_down_the_line() {
 
 # Main function where we call all the entire script logic.
 main() {
-    trap "" SIGTSTP
-    trap catch_control_c SIGINT
-    printf "%s" "${invisible_cursor}"
+    trap "" SIGTSTP                  # trap CTRL - Z and ignore it.
+    trap catch_control_c SIGINT      # trap CTRL - C and exit the script printing exit message.
+    printf "%s" "${invisible_cursor}"      # cursor will be invisible.
 
     clear                # when we execute the script command line interface is cleared.
 
-    printing_header "URL decoder v0.1"
-    check_arguments "${@}"
+    printing_header "URL decoder v0.2"         # print the header 
+    check_arguments "${@}"                     # sanity checks on given arguments when lunching the script
     
     tput sc               # save position.
     
     # Part where searching is executed.
-    progress_dots "${time_to_sleep}" "." "Searching" "0" &
-    where_to_read="$(locate_the_file)"
-    ending_dots
-    check_availibility
-    make_backup
+    # Searching bar with dots and time to sleep is given by the user. 
+    # This is run in the bg, but as you now if you print something from background will appear in foreground. 
+    # And at the same time as you can see I search for the file
+    progress_dots "${time_to_sleep}" "." "Searching" "0" &                    
+    where_to_read="$(locate_the_file)"                                   # command substitution and execute the function "locate_the_file" and save the restu in variabl where_to_read
+    ending_dots                                                          # here will end the progress with dots and this will happen after search is executed. We will kill the process from background
+    check_availibility                                                   # if where_to_read will be 1 then file was not found and a message will appear and script will exit with code 1.
+    make_backup                                                          #
     checking_nr_lines
     wait_period_from_file
     
@@ -242,6 +244,7 @@ main() {
     printf "%s" "${complete_main_task}"
 
     printf "%s\n\n" "${normal_cursor}"
+    sleep 0.5
 }
 
 # Execute main function.
