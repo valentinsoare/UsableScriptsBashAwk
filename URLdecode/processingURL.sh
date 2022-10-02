@@ -30,8 +30,9 @@ checking_nr_lines() {
     number_of_lines="$(wc -l "${where_to_read}" | cut -f1 -d " ")"
     
     if [[ ${number_of_lines} -le 0 ]]; then
-        echo -en " \U26D4"
-        printf "\033[31m%s\033[0m%s%s\n" " ERROR" " You need to use a file with at least one line in it." "${normal_cursor}"
+        echo -en "\n \U26D4"
+        printf "\033[31m%s\033[0m%s%s\n\n" " ERROR" " You need to use a file with at least one line in it." "${normal_cursor}"
+        exit 1
     fi
 }
 
@@ -109,6 +110,7 @@ make_backup() {
         cp "${entire_path_file_to_backup}" "${directory_for_backup}/backup_${only_file_name}"
     fi
     
+    
     sleep 0.5
     echo -en "\n \U2705"
     printf "%s\n%s\n" " Backup of the given file was made in parent directory." "    Location: ${directory_for_backup}/backup_${only_file_name}"
@@ -152,15 +154,20 @@ action_when_no_activity_for_logs() {
     fi
 }
 
-# Execute the main task on the given file using the entire path and print the success message and create/populate logs. Where we have # at the end of the line in function
-# that message will appear in logs. Also at the end of the script some messages will appear and are printed with this function.
-execute_task_and_logging() {
-
-    if [[ ! -e ${directory_for_backup}/url_processing.log ]]; then
+# Check if log file exists and if not, it will be created.
+check_for_log_file() {
+      if [[ ! -e ${directory_for_backup}/url_processing.log ]]; then
         touch "${directory_for_backup}"/url_processing.log
         printf "\n%s\n" " *How many lines we have and how many characters per each type we replaced: " >> "${directory_for_backup}"/url_processing.log
         printf "%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
     fi
+}
+
+# Execute the main task on the given file using the entire path and print the success message and create/populate logs. Where we have # at the end of the line in function
+# that message will appear in logs. Also at the end of the script some messages will appear and are printed with this function.
+execute_task_and_logging() {
+
+    check_for_log_file
 
     printf "%s" " - > $(date)" >> "${directory_for_backup}"/url_processing.log                 
 
@@ -228,23 +235,23 @@ main() {
     where_to_read="$(locate_the_file)"                                   # command substitution and execute the function "locate_the_file" and save the restu in variabl where_to_read
     ending_dots                                                          # here will end the progress with dots and this will happen after search is executed. We will kill the process from background
     check_availibility                                                   # if where_to_read will be 1 then file was not found and a message will appear and script will exit with code 1.
-    make_backup                                                          #
-    checking_nr_lines
-    wait_period_from_file
+    checking_nr_lines                                                    # check the number of lines from a file. If there are no line an error will appear.
+    make_backup                                                          # make a backup of the file with URLs
+    wait_period_from_file                                                # determin time to sleep taking into consideration the number of lines from the file when "executing phase" is starting.
     
     tput rc               # restore position.
     tput el               # delete from the cursor to the end of the line.
     
     # Here we execute the main task. Like replace the end of each URL from the given file.
     progress_dots "${time_to_sleep}" "." "Executing" "1" &
-    sleep 5
-    complete_main_task=$(execute_task_and_logging)
-    ending_dots
-    moving_down_the_line 2       # move down the cursor.
-    printf "%s" "${complete_main_task}"
+    sleep 3                      # here this sleep is used in order to increase thee number of dots for executing phase. For effect.
+    complete_main_task=$(execute_task_and_logging)                # execute the task and logging
+    ending_dots                                                   # after the task is completed progress bar will be complete with a DONE message.
+    moving_down_the_line 2       # move down the cursor.          # this is to move down the cursor
+    printf "%s" "${complete_main_task}"                           # to print the output of th main task that is stored in complete_main_task variable
 
-    printf "%s\n\n" "${normal_cursor}"
-    sleep 0.5
+    printf "%s\n\n" "${normal_cursor}"                            # restore the cursor to visible.
+    sleep 0.5                                                      
 }
 
 # Execute main function.
