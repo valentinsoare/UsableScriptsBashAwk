@@ -1,11 +1,15 @@
 #!/usr/bin/bash
 
+######################################################################################################
+# Script is made with a sole purpose of decoding URLs into ASCII characters, but only the end of URLs#                                           
+# URL enecoding reference is taking from https://www.w3schools.com/tags/ref_urlencode.ASP            #                                                              
+######################################################################################################
+
 declare -a list_with_keys list_with_values
 declare input_file invisible_cursor normal_cursor number_of_lines \
             location_file where_to_read characters_count
 
 input_file="${1}"                
-time_to_sleep="${2}"
 normal_cursor=$(tput cnorm)
 invisible_cursor=$(tput civis)
 characters_count="None"
@@ -67,7 +71,8 @@ check_arguments() {
            First is the file with urls and the next is how many seconds to wait beetween progress dots. 
 
            Now if the second argument is not given or is not a number, then script will set wait time to a specific value
-           taking into consideration the number of lines in the given file. If the file is not find, then' "${normal_cursor}"
+           taking into consideration the number of lines in the given file. If the file is not find, then an error will appear.
+           URLs encoding reference from https://www.w3schools.com/tags/ref_urlencode.ASP. ' "${normal_cursor}"
         exit 1
     fi
 
