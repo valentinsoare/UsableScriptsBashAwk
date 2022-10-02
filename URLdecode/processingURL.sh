@@ -6,10 +6,11 @@
 ######################################################################################################
 
 declare -a list_with_keys list_with_values
-declare input_file invisible_cursor normal_cursor number_of_lines \
-            location_file where_to_read characters_count
+declare input_file invisible_cursor normal_cursor number_of_lines directory_for_backup \
+            location_file where_to_read characters_count only_file_name entire_path_file_to_backup
 
-input_file="${1}"                
+input_file="${1}"
+time_to_sleep="${2}"                
 normal_cursor=$(tput cnorm)
 invisible_cursor=$(tput civis)
 characters_count="None"
@@ -64,7 +65,6 @@ wait_period_from_file() {
 
 # Check if valid arguments were given when the script was lunched. If not, an error will appear. Also here we set the wait period from the numbeer of fils.
 check_arguments() {
-  
     if [[ ${#} -lt 1 ]]; then
         echo -en " \U26D4"
         printf "\033[31m%s\033[0m%s\n%s\n" " ERROR" '  You need to use two arguments for this script.
@@ -171,7 +171,6 @@ check_for_log_file() {
 # Execute the main task on the given file using the entire path and print the success message and create/populate logs. Where we have # at the end of the line in function
 # that message will appear in logs. Also at the end of the script some messages will appear and are printed with this function.
 execute_task_and_logging() {
-
     check_for_log_file
 
     printf "%s" " - > $(date)" >> "${directory_for_backup}"/url_processing.log                 
@@ -179,6 +178,7 @@ execute_task_and_logging() {
     length_of_list_keys="${#list_with_keys[@]}"
 
     printf "\n%s" " *To be replaced: " >> "${directory_for_backup}"/url_processing.log
+
     for ((j=0; j<length_of_list_keys; j++)); do
         if grep -q "${list_with_keys[j]}" "${where_to_read}"; then
             ((characters_count++))
@@ -207,7 +207,7 @@ execute_task_and_logging() {
     printf "%s\n%113s\n\n" " All lines were processed with success." "Please access the file: ${where_to_read}"
 
     echo -en " \U2705"
-    printf "%s\n\n" " For logs see: ${directory_for_backup}/url_processing.log "
+    printf "%s\n\n" " For logs see: ${directory_for_backup}/url_processing.log"
 }
 
 # Moving the cursor down in the terminal
@@ -225,7 +225,7 @@ main() {
     trap catch_control_c SIGINT      # trap CTRL - C and exit the script printing exit message.
     printf "%s" "${invisible_cursor}"      # cursor will be invisible.
 
-    clear                # when we execute the script command line interface is cleared.
+    clear                # when we execute the script the screen is cleared first then the script will run.
 
     printing_header "URL decoder v0.2"         # print the header 
     check_arguments "${@}"                     # sanity checks on given arguments when lunching the script
@@ -250,7 +250,7 @@ main() {
     # Here we execute the main task. Like replace the end of each URL from the given file.
     progress_dots "${time_to_sleep}" "." "Executing" "1" &
     sleep 3                      # here this sleep is used in order to increase thee number of dots for executing phase. For effect.
-    complete_main_task=$(execute_task_and_logging)                # execute the task and logging
+    complete_main_task=$(execute_task_and_logging)                # use command substitution to execute the task and logging and store the output in a variable.
     ending_dots                                                   # after the task is completed progress bar will be complete with a DONE message.
     moving_down_the_line 2       # move down the cursor.          # this is to move down the cursor
     printf "%s" "${complete_main_task}"                           # to print the output of th main task that is stored in complete_main_task variable
