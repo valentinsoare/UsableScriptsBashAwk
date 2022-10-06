@@ -35,7 +35,7 @@ checking_nr_lines() {
     number_of_lines="$(wc -l "${where_to_read}" | cut -f1 -d " ")"
     
     if [[ ${number_of_lines} -le 0 ]]; then
-        echo -en "\n \U26D4"
+        #echo -en "\n \U26D4"
         printf "\033[31m%s\033[0m%s%s\n\n" " ERROR" " You need to use a file with at least one line in it." "${normal_cursor}"
         exit 1
     fi
@@ -44,8 +44,8 @@ checking_nr_lines() {
 # Print the messag if file is not found.
 check_availibility() {
     if [[ "${where_to_read}" == "1" ]]; then
-        echo -en " \n \U26D4"
-        printf "\033[31m%s\033[0m%s%s\n\n" " ERROR" " Cannot find the file" "${normal_cursor}"
+        #echo -en " \n \U26D4"
+        printf "\n\033[31m%s\033[0m%s%s\n\n" " ERROR" " Cannot find the file" "${normal_cursor}"
         exit 1
     fi
 }
@@ -66,8 +66,8 @@ wait_period_from_file() {
 # Check if valid arguments were given when the script was lunched. If not, an error will appear. Also here we set the wait period from the numbeer of fils.
 check_arguments() {
     if [[ ${#} -lt 1 ]]; then
-        echo -en " \U26D4"
-        printf "\033[31m%s\033[0m%s\n%s\n" " ERROR" '  You need to use two arguments for this script.
+        #echo -en " \U26D4"
+        printf "\033[31m%s\033[0m%s\n%s\n" "    ERROR" '  You need to use two arguments for this script.
            First is the file with urls and the next is how many seconds to wait beetween progress dots. 
 
            Now if the second argument is not given or is not a number, then script will set wait time to a specific value
@@ -117,8 +117,8 @@ make_backup() {
     
     
     sleep 0.5
-    echo -en "\n \U2705"
-    printf "%s\n%s\n" " Backup of the given file was made in parent directory." "    Location: ${directory_for_backup}/backup_${only_file_name}"
+    #echo -en "\n \U2705"
+    printf "\n - > %s\n%s\n" "Backup of the given file was made in parent directory." "     Location: ${directory_for_backup}/backup_${only_file_name}"
 }
 
 # Print dots whil all the magic happens in the background.
@@ -126,13 +126,13 @@ progress_dots() {
     local sleepTime="${1}"
     local typeP="${2}"
     local message="${3}"
-    local in_front="${4}"
+    #local in_front="${4}"
 
-    if [[ ${in_front} -eq 0 ]]; then
-        echo -en " \U1F50E"
-    else
-        echo -en " \U1FA9B"
-    fi
+    #if [[ ${in_front} -eq 0 ]]; then
+    #    echo -en " \U1F50E"
+    #else
+    #    echo -en " \U1FA9B"
+    #fi
 
     echo -n " ${message}"
 
@@ -206,11 +206,11 @@ execute_task_and_logging() {
     printf "\n%s" " ***From file, lines: ${number_of_lines}, characters type replaced: ${characters_count}" >> "${directory_for_backup}"/url_processing.log
     printf "\n%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
 
-    echo -en "\n \U2705"
-    printf "%s\n%113s\n\n" " All lines were processed with success." "Please access the file: ${where_to_read}"
+    #echo -en "\n \U2705"
+    printf "\n%s\n%114s\n\n" " - > All lines were processed with success." "Please access the file: ${where_to_read}"
 
-    echo -en " \U2705"
-    printf "%s\n\n" " For logs see: ${directory_for_backup}/url_processing.log"
+    #echo -en " \U2705"
+    printf "%s\n\n" " - > For logs see: ${directory_for_backup}/url_processing.log"
 }
 
 # Moving the cursor down in the terminal
