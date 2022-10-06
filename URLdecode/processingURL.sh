@@ -171,6 +171,8 @@ check_for_log_file() {
 # Execute the main task on the given file using the entire path and print the success message and create/populate logs. Where we have # at the end of the line in function
 # that message will appear in logs. Also at the end of the script some messages will appear and are printed with this function.
 execute_task_and_logging() {
+
+
     check_for_log_file
 
     printf "%s" " - > $(date)" >> "${directory_for_backup}"/url_processing.log                 
@@ -180,7 +182,8 @@ execute_task_and_logging() {
     printf "\n%s" " *To be replaced: " >> "${directory_for_backup}"/url_processing.log
 
     for ((j=0; j<length_of_list_keys; j++)); do
-        if grep -q "${list_with_keys[j]}" "${where_to_read}"; then
+        if grep -q -i "${list_with_keys[j]}" "${where_to_read}"; then
+            sed -i "s_${list_with_keys[j],,}_${list_with_keys[j]}_g" "${where_to_read}" 2> /dev/null
             ((characters_count++))
             printf "%s" "" " ${list_with_keys[j]} |" >> "${directory_for_backup}"/url_processing.log
         fi
@@ -191,9 +194,9 @@ execute_task_and_logging() {
     printf "\n%s" " **Characters that were converted: " >> "${directory_for_backup}"/url_processing.log
 
     for (( i=0; i<length_of_list_keys; i++ )); do
-        value_count=$(grep -E -i -c "${list_with_keys[i]}" "${where_to_read}")
+        value_count=$(grep -E -c -i "${list_with_keys[i]}" "${where_to_read}")
         if [[ ${value_count} -ne 0 ]]; then
-            sed -i -e "s|${list_with_keys[i]}|${list_with_values[i]}|g" "${where_to_read}" 2> /dev/null
+            sed -i -e "s_${list_with_keys[i]}_${list_with_values[i]}_g" "${where_to_read}" 2> /dev/null
             printf "%s" " [${list_with_keys[i]}]=${value_count} |" >> "${directory_for_backup}"/url_processing.log
         fi
     done
