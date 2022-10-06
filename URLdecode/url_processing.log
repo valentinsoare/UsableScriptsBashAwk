@@ -6,3 +6,28 @@
  **Characters that were converted:  [%2A]=4 | [%2B]=3 | [%2C]=1 | [%2D]=1 | [%3A]=2 | [%3B]=2 | [%3C]=1 | [%3D]=3 |
  ***From file, lines: 20, characters type replaced: 8
 ----------------------------------------------------------------------------------------------------
+ - > Mon Oct  3 12:03:13 AM EEST 2022
+ *To be replaced:  %2A | %2B | %2C | %2D | %3A | %3B | %3C | %3D |
+ **Characters that were converted:  [%2A]=4 | [%2B]=3 | [%2C]=1 | [%2D]=1 | [%3A]=2 | [%3B]=2 | [%3C]=1 | [%3D]=3 |
+ ***From file, lines: 20, characters type replaced: 8
+----------------------------------------------------------------------------------------------------
+ - > Tue Oct  4 12:56:30 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 20, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Tue Oct  4 02:45:14 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 20, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Tue Oct  4 02:50:13 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 20, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Tue Oct  4 08:42:20 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 20, characters type replaced: None
+----------------------------------------------------------------------------------------------------
