@@ -239,7 +239,7 @@ main() {
     # Searching bar with dots and time to sleep is given by the user. 
     # This is run in the bg, but as you now if you print something from background will appear in foreground. 
     # And at the same time as you can see I search for the file
-    progress_dots "${time_to_sleep}" "." "Searching" "0" &                    
+    ee "${time_to_sleep}" "." "Searching" & # 0 was forth argument but now we have only three for this function due to mssing unicode on Pdck serveres                   
     where_to_read="$(locate_the_file)"                                   # command substitution and execute the function "locate_the_file" and save the restu in variabl where_to_read
     ending_dots                                                          # here will end the progress with dots and this will happen after search is executed. We will kill the process from background
     check_availibility                                                   # if where_to_read will be 1 then file was not found and a message will appear and script will exit with code 1.
@@ -259,7 +259,7 @@ main() {
     printf "%s" "${complete_main_task}"                           # to print the output of th main task that is stored in complete_main_task variable
 
     printf "%s\n\n" "${normal_cursor}"                            # restore the cursor to visible.
-    sleep 0.5                                                      
+    sleep 0.5                                                          
 }
 
 # Execute main function.
