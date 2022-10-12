@@ -1,18 +1,18 @@
 #!/usr/bin/bash
 
-######################################################################################################
-# Script is made with a sole purpose of decoding URLs into ASCII characters, but only the end of URLs#                                           
-# URL enecoding reference is taking from https://www.w3schools.com/tags/ref_urlencode.ASP            #                                                              
-######################################################################################################
+#######################################################################################################
+# Script is made with a sole purpose of decoding URLs into ASCII characters, but only the end of URLs #                                           
+# URL enecoding reference is taking from https://www.w3schools.com/tags/ref_urlencode.ASP             #                                                              
+#######################################################################################################
 
-declare -a list_with_keys list_with_values
+declare -a list_with_keys list_with_values                            # lists declaration
 declare input_file invisible_cursor normal_cursor number_of_lines directory_for_backup \
-            location_file where_to_read characters_count only_file_name entire_path_file_to_backup
+            location_file where_to_read characters_count only_file_name entire_path_file_to_backup # declaration of ariables available throughout the entire script
 
 input_file="${1}"
 time_to_sleep="${2}"                
-normal_cursor=$(tput cnorm)
-invisible_cursor=$(tput civis)
+normal_cursor=$(tput cnorm)                    # revert the cursor to normal
+invisible_cursor=$(tput civis)                 # make the sript invisible
 characters_count="None"
 
 # You can add more characters to both lists. Please use this link - https://www.w3schools.com/tags/ref_urlencode.ASP - to see the encoding reference. 
@@ -77,7 +77,7 @@ check_arguments() {
     fi
 
     if [[ -z "${time_to_sleep}" || ! "${time_to_sleep}" =~ ^([[:digit:]]{1,}||[[:digit:]]{1,}\.[[:digit:]]{1,})$ ]]; then
-        time_to_sleep=0.3       # time to sleep (0.3 seconds) between dots when searcing in case user doesn't give the second argument.
+        time_to_sleep=0.5       # time to sleep (0.3 seconds) between dots when searcing in case user doesn't give the second argument.
     fi
 }
 
@@ -128,9 +128,9 @@ progress_dots() {
     local message="${3}"
     #local in_front="${4}"
 
-    #if [[ ${in_front} -eq 0 ]]; then
-    #    echo -en " \U1F50E"
-    #else
+    #if [[ ${in_front} -eq 0 ]]; then                   # this part was made for unicode characters, but on RHEL 7 servers saw that we do not have them. Script was made on Fedora 35.
+    #    echo -en " \U1F50E"                            # where you will see '\U' you should know that I'm trying to print a unicode character.
+    #else                                               # saw that I cannot print a unicode with printf, only with echo was working, but in Fedora.
     #    echo -en " \U1FA9B"
     #fi
 
@@ -207,7 +207,7 @@ execute_task_and_logging() {
     printf "\n%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
 
     #echo -en "\n \U2705"
-    printf "\n%s\n%110s\n\n" " - > All lines were processed with success." "Please access the file: ${where_to_read}"
+    printf "\n%s\n%118s\n\n" " - > All lines were processed with success." "Please access the file: ${where_to_read}"
 
     #echo -en " \U2705"
     printf "%s\n\n" " - > For logs see: ${directory_for_backup}/url_processing.log"
@@ -240,6 +240,7 @@ main() {
     # This is run in the bg, but as you now if you print something from background will appear in foreground. 
     # And at the same time as you can see I search for the file
     progress_dots "${time_to_sleep}" "." "Searching" & # 0 was forth argument but now we have only three for this function due to mssing unicode on Pdck serveres                   
+    sleep 3                                                              # # here this sleep is used in order to increase thee number of dots for executing phase. For effect.
     where_to_read="$(locate_the_file)"                                   # command substitution and execute the function "locate_the_file" and save the restu in variabl where_to_read
     ending_dots                                                          # here will end the progress with dots and this will happen after search is executed. We will kill the process from background
     check_availibility                                                   # if where_to_read will be 1 then file was not found and a message will appear and script will exit with code 1.
