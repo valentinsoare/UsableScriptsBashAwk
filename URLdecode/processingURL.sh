@@ -207,7 +207,7 @@ execute_task_and_logging() {
     printf "\n%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
 
     #echo -en "\n \U2705"
-    printf "\n%s\n%114s\n\n" " - > All lines were processed with success." "Please access the file: ${where_to_read}"
+    printf "\n%s\n%110s\n\n" " - > All lines were processed with success." "Please access the file: ${where_to_read}"
 
     #echo -en " \U2705"
     printf "%s\n\n" " - > For logs see: ${directory_for_backup}/url_processing.log"
@@ -239,7 +239,7 @@ main() {
     # Searching bar with dots and time to sleep is given by the user. 
     # This is run in the bg, but as you now if you print something from background will appear in foreground. 
     # And at the same time as you can see I search for the file
-    ee "${time_to_sleep}" "." "Searching" & # 0 was forth argument but now we have only three for this function due to mssing unicode on Pdck serveres                   
+    progress_dots "${time_to_sleep}" "." "Searching" & # 0 was forth argument but now we have only three for this function due to mssing unicode on Pdck serveres                   
     where_to_read="$(locate_the_file)"                                   # command substitution and execute the function "locate_the_file" and save the restu in variabl where_to_read
     ending_dots                                                          # here will end the progress with dots and this will happen after search is executed. We will kill the process from background
     check_availibility                                                   # if where_to_read will be 1 then file was not found and a message will appear and script will exit with code 1.

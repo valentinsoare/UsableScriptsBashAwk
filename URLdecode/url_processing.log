@@ -196,3 +196,38 @@
  **Characters that were converted:  [%2B]=11 | [%2D]=1 | [%2E]=1 | [%2F]=8 | [%3A]=2 | [%3C]=1 | [%3D]=11 | [%3F]=1 |
  ***From file, lines: 19, characters type replaced: 8
 ----------------------------------------------------------------------------------------------------
+ - > Wed Oct 12 06:03:33 PM EEST 2022
+ *To be replaced:  %2B | %2F | %3D |
+ **Characters that were converted:  [%2B]=57 | [%2F]=51 | [%3D]=114 |
+ ***From file, lines: 115, characters type replaced: 3
+----------------------------------------------------------------------------------------------------
+ - > Wed Oct 12 06:04:42 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 115, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Wed Oct 12 06:05:10 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 115, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Wed Oct 12 06:05:35 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 115, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Wed Oct 12 06:05:58 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 115, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Wed Oct 12 06:06:21 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 115, characters type replaced: None
+----------------------------------------------------------------------------------------------------
+ - > Wed Oct 12 06:06:46 PM EEST 2022
+ *To be replaced: None
+ **Characters that were converted: None
+ ***From file, lines: 115, characters type replaced: None
+----------------------------------------------------------------------------------------------------
