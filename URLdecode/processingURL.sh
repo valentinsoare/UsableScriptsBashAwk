@@ -115,7 +115,6 @@ make_backup() {
         cp "${entire_path_file_to_backup}" "${directory_for_backup}/backup_${only_file_name}"
     fi
     
-    
     sleep 0.5
     #echo -en "\n \U2705"
     printf "\n - > %s\n%s\n" "Backup of the given file was made in parent directory." "     Location: ${directory_for_backup}/backup_${only_file_name}"
@@ -172,7 +171,6 @@ check_for_log_file() {
 # that message will appear in logs. Also at the end of the script some messages will appear and are printed with this function.
 execute_task_and_logging() {
 
-
     check_for_log_file
 
     printf "%s" " - > $(date)" >> "${directory_for_backup}"/url_processing.log                 
@@ -207,7 +205,7 @@ execute_task_and_logging() {
     printf "\n%100s\n" " " | tr ' ' '-' >> "${directory_for_backup}"/url_processing.log
 
     #echo -en "\n \U2705"
-    printf "\n%s\n%118s\n\n" " - > All lines were processed with success." "Please access the file: ${where_to_read}"
+    printf "\n%s\n%121s\n\n" " - > All lines were processed with success." "Please access the file: ${where_to_read}"
 
     #echo -en " \U2705"
     printf "%s\n\n" " - > For logs see: ${directory_for_backup}/url_processing.log"
@@ -241,7 +239,7 @@ main() {
     # And at the same time as you can see I search for the file
     progress_dots "${time_to_sleep}" "." "Searching" & # 0 was forth argument but now we have only three for this function due to mssing unicode on Pdck serveres                   
     sleep 3                                                              # # here this sleep is used in order to increase thee number of dots for executing phase. For effect.
-    where_to_read="$(locate_the_file)"                                   # command substitution and execute the function "locate_the_file" and save the restu in variabl where_to_read
+    where_to_read="$(locate_the_file)"                                   # command substitution and execute the function "locate_the_file" and save the result in variable where_to_read
     ending_dots                                                          # here will end the progress with dots and this will happen after search is executed. We will kill the process from background
     check_availibility                                                   # if where_to_read will be 1 then file was not found and a message will appear and script will exit with code 1.
     checking_nr_lines                                                    # check the number of lines from a file. If there are no line an error will appear.
