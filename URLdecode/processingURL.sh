@@ -220,12 +220,6 @@ moving_down_the_line() {
     done
 }
 
-printing() {
-    local aiurea=0
-}
-
-
-printf "%s" "${aiurea}"
 
 # Main function where we call all the entire script logic.
 main() {
